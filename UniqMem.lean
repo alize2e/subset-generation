@@ -79,6 +79,33 @@ theorem List.uMem_of_uElem_eq_true [BEq α] [LawfulBEq α] {x : α} {l : List α
 --         have h3 : helpGR (x::xs) = (cons false x) :: [cons true x] ++ helpGR xs := by rfl
 --         simp [h2,h3]
 
+-- theorem Subset.t5 {n : Nat} {b : Bool} {bs : Subset n} {l : List (Subset n)} {h : bs ∉ l} :
+--   cons b bs ∉ helpGR l := by
+--     induction l with
+--     | nil => nofun
+--     | cons x xs ih =>
+      -- have : bs ≠ x := by
+      --   calc bs ≠ x
+      --     _ = ¬ (bs = x) := by rfl
+      --     _ = ¬
+
+theorem Subset.t6 {n : Nat} {b : Bool} {bs : Subset n} {l : List (Subset n)} {h : cons b bs ∈ helpGR l} :
+  bs ∈ l := by
+    induction l with
+    | nil =>
+      have h1 : (cons b bs) ∉ ([] : List (Subset (n+1))) := by simp
+      have h2 : helpGR ([] : List (Subset (n+1))) = [] := by rfl
+      have : (cons b bs) ∉ helpGR ([] : List (Subset n)) := by
+        calc (cons b bs) ∉ helpGR ([] : List (Subset n))
+          _ = ((cons b bs) ∉ ([] : List (Subset (n+1)))) := by simp [h2]
+          _ = true := by simp [h1]
+
+      sorry
+    | cons x xs ih =>
+      cases ih
+      . simp [ih, h]
+      . simp [ih, h]
+
 theorem Subset.temp {n : Nat} {b : Bool} {bs : Subset n} {l : List (Subset n)} :
   l.UniqMem bs → (helpGR l).UniqMem (cons b bs) := by
     induction l with
@@ -90,13 +117,22 @@ theorem Subset.temp {n : Nat} {b : Bool} {bs : Subset n} {l : List (Subset n)} :
         match b with
         | true =>
           have : List.UniqMem (cons true bs) (helpGR (bs::xs)) = List.UniqMem (cons true bs) (cons false bs :: cons true bs :: helpGR xs) := by rfl
-          have : (cons true bs) ∉ helpGR xs := by
-            induction xs with
-            | nil => nofun
-            | cons a as ih' =>
-
-          have : List.UniqMem (cons true bs) (cons true bs :: helpGR xs) := by simp [List.UniqMem]
+          -- have : (cons true bs) ∉ helpGR xs := by
+            -- induction xs with
+            -- | nil => nofun
+            -- | cons y ys ih' =>
+            --   have : helpGR (y::ys) = (cons false y :: cons true y :: helpGR ys) := by rfl
+            --   have : bs ≠ y := by assumption
+            --   match b with
+            --   | false =>
+            --     rw [h2]
+          sorry
+          -- have : List.UniqMem (cons true bs) (cons true bs :: helpGR xs) := by simp [List.UniqMem]
+        | false => sorry
           --   _ = List.UniqMem (cons true bs) (cons true bs :: helpGR xs) := by rfl
           --   _ = ((cons true bs) :: helpGR xs).uElem (cons true bs) := by rfl
           --   _ = match (cons true bs) == (cons true bs) with | true => !(helpGR xs).elem (cons true bs) | false => (helpGR xs).uElem (cons true bs) := by rfl
           --   _ = !(helpGR xs).elem (cons true bs) := by simp
+      . have h3 : bs ≠ x := by assumption
+        have h4 : xs.UniqMem bs := by assumption
+        sorry
