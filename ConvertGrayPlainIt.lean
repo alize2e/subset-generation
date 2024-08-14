@@ -125,7 +125,6 @@ theorem Subset.BC1p {b : Bool} : (φ∘ψ) (cons b nil) = (cons b nil) := by
     _ = (b, cons b nil).snd := by simp
     _ = cons b nil := by rfl
 
-theorem Subset.BC0g : (ψ∘φ) nil = nil := rfl
 theorem Subset.BC1g {b : Bool} : (ψ∘φ) (cons b nil) = (cons b nil) := by
   calc (ψ∘φ) (cons b nil)
     _ = ψ (φ (cons b nil)) := by rfl
@@ -135,29 +134,9 @@ theorem Subset.BC1g {b : Bool} : (ψ∘φ) (cons b nil) = (cons b nil) := by
     _ = ψ (b, cons b nil).snd := by simp
     _ = ψ (cons b nil) := by rfl
     _ = cons b nil := by rfl
--- theorem Subset.ISg {n : Nat} {b : Bool} {gh : Bool} {g : Subset n} (ih : (ψ∘φ) (cons gh g) = cons gh g) :
---   (ψ∘φ) (cons b (cons gh g)) = cons b (cons gh g) := by
---     calc (ψ ∘ φ) (cons b (cons gh g))
---       _ = ψ (φ (cons b (cons gh g))) := by rfl
---       _ = ψ (φ' (cons b (cons gh g))).snd := by rfl
---       _ = ψ (xor b (φ' (cons gh g)).fst, cons (xor b (φ' (cons gh g)).fst) (φ' (cons gh g)).snd).snd := by rfl
---       _ = ψ (cons (xor b (φ' (cons gh g)).fst) (φ' (cons gh g)).snd) := by rfl
---       _ = ψ (cons (xor b (φ' (cons gh g)).snd.prev) (φ' (cons gh g)).snd) := by rfl
---       _ = ψ (cons (xor b ((xor gh (φ' g).fst, cons (xor gh (φ' g).fst) (φ' g).snd)).snd.prev) ((xor gh (φ' g).fst, cons (xor gh (φ' g).fst) (φ' g).snd)).snd) := by rfl
---       _ = ψ (cons (xor b (cons (xor gh (φ' g).fst) (φ' g).snd).prev) (cons (xor gh (φ' g).fst) (φ' g).snd)) := by rfl
---       _ = ψ (cons (xor b (xor gh (φ' g).fst)) (cons (xor gh (φ' g).fst) (φ' g).snd)) := by rfl
---       _ = cons (xor (xor b (xor gh (φ' g).fst)) (xor gh (φ' g).fst)) (ψ (cons (xor gh (φ' g).fst) (φ' g).snd)) := by rfl
---       _ = cons (xor b (xor (xor gh (φ' g).fst) (xor gh (φ' g).fst))) (ψ (cons (xor gh (φ' g).fst) (φ' g).snd)) := by rw [Bool.xor_assoc]
---       _ = cons (xor b false) (ψ (cons (xor gh (φ' g).fst) (φ' g).snd)) := by rw [Bool.xor_self]
---       _ = cons b (ψ (cons (xor gh (φ' g).fst) (φ' g).snd)) := by rw [Bool.xor_false]
---       _ = cons b (ψ (((xor gh (φ' g).fst, cons (xor gh (φ' g).fst) (φ' g).snd)).snd)) := by rfl
---       _ = cons b (ψ (φ' (cons gh g)).snd) := by rfl
---       _ = cons b (ψ (φ (cons gh g))) := by rfl
---       _ = cons b ((ψ∘φ) (cons gh g)) := by rfl
---       _ = cons b (cons gh g) := by rw [ih]
 
-theorem Subset.ψ_φ_id {n : Nat} {g : Subset n} : (ψ∘φ) g = g := by
-  induction g with
+theorem Subset.ψ_φ_id {n : Nat} {gray : Subset n} : (ψ∘φ) gray = gray := by
+  induction gray with
   | nil => rfl
   | cons b g' ih =>
     match g' with
@@ -184,14 +163,35 @@ theorem Subset.ψ_φ_id {n : Nat} {g : Subset n} : (ψ∘φ) g = g := by
         _ = cons b ((ψ∘φ) (cons gh g)) := by rfl
         _ = cons b (cons gh g) := by rw [ih]
 
-
--- theorem ψ_φ_id {n : Nat} {g : Subset n} : (Subset.ψ∘Subset.φ) g = g := by
---   induction g with
---   | nil => rfl
---   | cons b nil ih =>
---     calc ((Subset.ψ∘Subset.φ) (Subset.cons b Subset.nil))
---       _ = (Subset.cons b Subset.nil) := by rw [Subset.BC1g]
---   | cons b g' ih' =>
---     simp
-
--- theorem Subset.φ_ψ_id
+theorem Subset.φ_ψ_id {n : Nat} {plain : Subset n} : (φ∘ψ) plain = plain := by
+  induction plain with
+  | nil => rfl
+  | cons b p' ih =>
+    match p' with
+    | nil =>
+      calc (φ ∘ ψ) (cons b nil)
+        _ = (cons b nil) := by rw [BC1p]
+    | cons ph p =>
+      induction p with
+      | nil =>
+        calc (xor (xor b ph) (φ' (ψ (cons ph nil))).fst)
+          _ = xor (xor b ph) (φ' (cons ph nil)).fst := by rfl
+          _ = xor (xor b ph) (xor ph (φ' nil).fst, cons (xor ph (φ' nil).fst) (φ' nil).snd).fst := by rfl
+          _ = xor (xor b ph) (xor ph (φ' nil).fst) := by rfl
+          _ = xor (xor b ph) (xor ph (false, nil).fst) := by rfl
+          _ = xor (xor b ph) (xor ph false) := by rfl
+          _ = xor (xor b ph) ph := by rw [Bool.xor_false]
+          _ = xor b (xor ph ph) := by rw [Bool.xor_assoc]
+          _ = xor b false := by rw [Bool.xor_self]
+          _ = b := by rw [Bool.xor_false]
+      | cons ph' p' ih'  =>
+        calc (φ∘ψ) (cons b (cons ph p))
+          _ = φ (ψ (cons b (cons ph p))) := by rfl
+          _ = φ (cons (xor b ph) (ψ (cons ph p))) := by rfl
+          _ = (φ' (cons (xor b ph) (ψ (cons ph p)))).snd := by rfl
+          _ = ((xor (xor b ph) (φ' (ψ (cons ph p))).fst, cons (xor (xor b ph) (φ' (ψ (cons ph p))).fst) (φ' (ψ (cons ph p))).snd)).snd := by rfl
+          _ = cons (xor (xor b ph) (φ' (ψ (cons ph p))).fst) (φ' (ψ (cons ph p))).snd := by rfl
+          _ = cons (xor (xor b ph) (φ' (ψ (cons ph p))).fst) (φ' (ψ (cons ph p))).snd := by rfl
+          _ = cons (xor (xor b ph) (φ' (ψ (cons ph p))).fst) ((φ∘ψ) (cons ph p)) := by rfl
+          _ = cons (xor (xor b ph) (φ' (ψ (cons ph p))).fst) (cons ph p) := by rw [ih]
+          -- but how to finish? WTS (xor (xor b ph) (φ' (ψ (cons ph p))).fst) = b
