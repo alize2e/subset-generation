@@ -33,11 +33,11 @@ def List.uElem [BEq α] (a : α) : List α → Bool
 theorem List.uElem_cons [BEq α] {a : α} :
     (b::bs).uElem a = match a == b with | true => !bs.elem a | false => bs.uElem a := by rfl
 
-theorem List.uMem_of_uElem_eq_true [BEq α] [LawfulBEq α] {x : α} {l : List α} : List.uElem a as = true → List.UniqMem a as := by
-  induction l with
-  | nil => simp [uElem]
-  | cons a as ih =>
-    rfl
+-- theorem List.uMem_of_uElem_eq_true [BEq α] [LawfulBEq α] {x : α} {l : List α} : List.uElem a as = true → List.UniqMem a as := by
+--   induction l with
+--   | nil => simp [uElem]
+--   | cons a as ih =>
+--     rfl
 
 -- theorem List.uMem_of_uElem_eq_true [BEq α] [LawfulBEq α] {a : α} {as : List α} : elem a as = true → UniqMem a as := by
 --   match as with
@@ -90,17 +90,15 @@ theorem List.uMem_of_uElem_eq_true [BEq α] [LawfulBEq α] {x : α} {l : List α
       --     _ = ¬
 
 theorem Subset.t6 {n : Nat} {b : Bool} {bs : Subset n} {l : List (Subset n)} {h : cons b bs ∈ helpGR l} :
-  bs ∈ l := by
+  bs ∈ l := 
     induction l with
     | nil =>
       have h1 : (cons b bs) ∉ ([] : List (Subset (n+1))) := by simp
-      have h2 : helpGR ([] : List (Subset (n+1))) = [] := by rfl
-      have : (cons b bs) ∉ helpGR ([] : List (Subset n)) := by
-        calc (cons b bs) ∉ helpGR ([] : List (Subset n))
-          _ = ((cons b bs) ∉ ([] : List (Subset (n+1)))) := by simp [h2]
-          _ = true := by simp [h1]
-
-      sorry
+      have h2 : ((cons b bs) ∉ helpGR ([] : List (Subset n))) → False := by simp [h]
+      simp
+      have h3 : helpGR ([] : List (Subset n)) = ([] : List (Subset (n+1))) := by rfl
+      have h4 : (cons b bs) ∉ helpGR ([] : List (Subset n)) := by simp [h1, h3]
+      simp [h2, h4]
     | cons x xs ih =>
       cases ih
       . simp [ih, h]
