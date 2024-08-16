@@ -19,12 +19,6 @@ def Subset.genGray (n : Nat) : List (Subset n) :=
 
 #eval (Subset.genGray 3) == (Subset.grayRecSlides 3)
 
--- def Subset.toggleFirst {n : Nat} (s : Subset n.succ) :=
---   match s with
---   | cons b bs => cons (¬b) bs
-
--- #eval (Subset.genGray 3).map Subset.toggleFirst
-
 theorem Subset.helpGRS_parity_reverse {n : Nat} : (helpGRS n false).reverse = helpGRS n true := by
   induction n with
   | zero => rfl
@@ -37,23 +31,25 @@ theorem Subset.helpGRS_parity_reverse {n : Nat} : (helpGRS n false).reverse = he
       _ = ((helpGRS n' false).map (cons true)) ++ ((helpGRS n' true).map (cons false)) := by simp
       _ = helpGRS n'.succ true := by rfl
 
--- theorem Subset.defunct_helpGG_eq {n : Nat}
+theorem Subset.helpGG_symmetry {n : Nat} :
 
-theorem Subset.gray_rec_eq' {n : Nat} : genGray n = grayRecSlides n := by
-  induction n with
-  | zero => rfl
-  | succ n' ih =>
-    calc genGray n'.succ
-      _ = helpGG (genGray n') [] := by rfl
-      _ = helpGG (grayRecSlides n') [] := by rw [ih]
+-- theorem Subset.genGray_IS {n : Nat} :
+--   ((genGray n).map (cons false)) ++ ((genGray n).map (cons true)).reverse = genGray n.succ := by
+--     induction n with
+--     | zero => rfl
+--     | succ n' ih =>
+--       calc ((genGray n'.succ).map (cons false)) ++ ((genGray n'.succ).map (cons true)).reverse
+--         _ = ((((genGray n').map (cons false)) ++ ((genGray n').map (cons true)).reverse).map (cons false)) ++ ((((genGray n').map (cons false)) ++ ((genGray n').map (cons true)).reverse).map (cons true)).reverse := by simp [ih]
 
-theorem Subset.gray_rec_eq {n : Nat} : grayRecSlides n = genGray n := by
-  induction n with
-  | zero => rfl
-  | succ n' ih =>
-    calc grayRecSlides n'.succ
-      _ = helpGRS n'.succ false := by rfl
-      _ = ((helpGRS n' false).map (cons false)) ++ ((helpGRS n' true).map (cons ¬false)) := by rfl
-      _ = ((helpGRS n' false).map (cons false)) ++ ((helpGRS n' false).reverse.map (cons ¬false)) := by rw [helpGRS_parity_reverse]
-      _ = ((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons ¬false)) := by rfl
-      _ = ((genGray n').map (cons false)) ++ ((genGray n').reverse.map (cons ¬false)) := by rw [ih]
+-- theorem Subset.gray_rec_eq {n : Nat} : grayRecSlides n = genGray n := by
+--   induction n with
+--   | zero => rfl
+--   | succ n' ih =>
+--     calc grayRecSlides n'.succ
+--       _ = helpGRS n'.succ false := by rfl
+--       _ = ((helpGRS n' false).map (cons false)) ++ ((helpGRS n' true).map (cons ¬false)) := by rfl
+--       _ = ((helpGRS n' false).map (cons false)) ++ ((helpGRS n' false).reverse.map (cons ¬false)) := by rw [helpGRS_parity_reverse]
+--       _ = ((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons ¬false)) := by rfl
+--       _ = ((genGray n').map (cons false)) ++ ((genGray n').reverse.map (cons ¬false)) := by rw [ih]
+--       _ = ((genGray n').map (cons false)) ++ ((genGray n').reverse.map (cons true)) := by simp
+--       _ = ((genGray n').map (cons false)) ++ ((genGray n').map (cons true)).reverse := by simp [List.reverse_map]
