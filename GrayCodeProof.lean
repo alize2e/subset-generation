@@ -10,6 +10,14 @@ theorem Subset.cons_same_num_changes {n : Nat} {as bs : Subset n} {x : Bool} : n
   cases x
   repeat rfl
 
+theorem Subset.eq_num_changes_eq_zero {n : Nat} {as : Subset n} : num_changes as as = 0 := by
+  induction as with
+  | nil => rfl
+  | cons b bs ih =>
+    have : num_changes (cons b bs) (cons b bs) = num_changes bs bs := by cases b <;> repeat rfl
+    rw [this]
+    rw [ih]
+
 -- List.get_map not imported, and not working ://///
 theorem List.diy_get_map (α β : Type) (f : α → β) (l : List α) (i : Nat) {h : i<l.length} : (l.map f)[i]'(by simp[h]) = f l[i] := by
   induction i generalizing l with
@@ -25,6 +33,17 @@ theorem List.diy_get_map (α β : Type) (f : α → β) (l : List α) (i : Nat) 
       calc ((x::xs).map f)[i'.succ]
         _ = (xs.map f)[i'] := by simp
         _ = f xs[i'] := by rw [ih]
+
+theorem List.diy_reverse_zero_last {α : Type} {l : List α} {h : 0<l.length} {h' : l.reverse.length-1<l.reverse.length} : l.reverse[l.reverse.length-1] = l[0] := by
+  match l with
+  | x::xs =>
+    -- have : (xs.reverse++[x]).length = (x::xs).length := by simp
+    have : (x::xs).reverse = xs.reverse++[x] := List.reverse_cons x xs
+    have : ¬ (xs.reverse++[x]).length-1 < xs.reverse.length := by simp
+    calc (x::xs).reverse[(x::xs).reverse.length-1]
+      _ = (xs.reverse++[x])[(xs.reverse++[x]).length-1] := by simp
+      _ = x := List.get_last this
+      _ = (x::xs)[0] := by simp
 
 -- edit so that i show it's also a gray cycle by changing h to ≤ not <, but a pain for indices
 theorem Subset.grayRecSlides_one_change_next {n : Nat} {parity : Bool} {i : Nat} {h : i.succ<(grayRecSlides n).length} :
@@ -70,6 +89,12 @@ theorem Subset.grayRecSlides_one_change_next {n : Nat} {parity : Bool} {i : Nat}
             _ = num_changes (cons false (grayRecSlides n')[i]) ((grayRecSlides n').reverse.map (cons true))[((grayRecSlides n').map (cons false)).length-((grayRecSlides n').map (cons false)).length] := by rw [h5]
             _ = num_changes (cons false (grayRecSlides n')[i]) ((grayRecSlides n').reverse.map (cons true))[0] := by simp
             _ = num_changes (cons false (grayRecSlides n')[i]) (cons true (grayRecSlides n').reverse[0]) := by rw [List.diy_get_map (Subset n') (Subset n'.succ) (cons true) (grayRecSlides n').reverse 0]
-            _ = num_changes (cons false (grayRecSlides n')[i]) (cons true (grayRecSlides n')[(grayRecSlides n').length-1]) := by simp [List.getElem_reverse]
+            -- _ = num_changes (cons false (grayRecSlides n')[i]) (cons true (grayRecSlides n').getLast) := by simp [List.getLast_reverse]
+            _ = num_changes (cons false (grayRecSlides n')[i]) (cons true (grayRecSlides n')[(grayRecSlides n').length-1]) := sorry
+            _ = num_changes (cons false (grayRecSlides n')[i]) (cons true (grayRecSlides n')[i.succ-1]) := by simp [hi]
+            _ = num_changes (cons false (grayRecSlides n')[i]) (cons true (grayRecSlides n')[i]) := by simp
+            _ = 1 + num_changes (grayRecSlides n')[i] (grayRecSlides n')[i] := by rfl
+            _ = 1 + 0 := by simp [eq_num_changes_eq_zero]
+            _ = 1 := by simp
         else
           sorry
