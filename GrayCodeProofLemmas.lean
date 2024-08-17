@@ -75,3 +75,15 @@ theorem List.diy_reverse_zero_last {α : Type} {l : List α} {h : 0<l.length} {h
 -- copied from documentation, idk why not imported
 theorem Nat.sub_one_add_one_eq_of_pos : ∀ {n}, 0 < n → (n - 1) + 1 = n
   | _+1, _ => rfl
+
+-- idk why not imported from documentation
+theorem Nat.sub_lt_sub_right : ∀ {a b c : Nat}, c ≤ a → a < b → a - c < b - c
+  | 0, _, _, hle, h => by
+    rw [Nat.eq_zero_of_le_zero hle, Nat.sub_zero, Nat.sub_zero]
+    exact h
+  | _, _, 0, _, h => by
+    rw [Nat.sub_zero, Nat.sub_zero]
+    exact h
+  | _+1, _+1, _+1, hle, h => by
+    rw [Nat.add_sub_add_right, Nat.add_sub_add_right]
+    exact Nat.sub_lt_sub_right (le_of_succ_le_succ hle) (lt_of_succ_lt_succ h)
