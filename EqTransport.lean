@@ -35,7 +35,7 @@ theorem Subset.eqT_eqBV {n m : Nat} {s1 : Subset n} {s2 : Subset m} (eqT : eqTra
       have : eqTransport (cons false as) (cons true bs) = false := by simp [eqTransport]
       contradiction
 
-theorem Subset.eqT_BV_IS {n m l : Nat} {as : Subset n} {b : Bool} {bs : Subset m} {s : Subset l} :
+theorem Subset.eqT_append_IS {n m l : Nat} {as : Subset n} {b : Bool} {bs : Subset m} {s : Subset l} :
   eqTransport s (append as (cons b bs)) = eqTransport s (append (append as (cons b nil)) bs) := by
     induction as generalizing l with
     | nil => rfl
