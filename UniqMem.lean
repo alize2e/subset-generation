@@ -88,9 +88,8 @@ theorem List.uElem_cons [BEq α] {a : α} :
       --   calc bs ≠ x
       --     _ = ¬ (bs = x) := by rfl
       --     _ = ¬
-
-theorem Subset.t6 {n : Nat} {b : Bool} {bs : Subset n} {l : List (Subset n)} {h : cons b bs ∈ helpGR l} :
-  bs ∈ l := 
+theorem Subset.t6 {n : Nat} {b : Bool} {bs : Subset n} {l : List (Subset n)} :
+  cons b bs ∈ helpGR l → bs ∈ l := by
     induction l with
     | nil =>
       have h1 : (cons b bs) ∉ ([] : List (Subset (n+1))) := by simp
@@ -100,9 +99,26 @@ theorem Subset.t6 {n : Nat} {b : Bool} {bs : Subset n} {l : List (Subset n)} {h 
       have h4 : (cons b bs) ∉ helpGR ([] : List (Subset n)) := by simp [h1, h3]
       simp [h2, h4]
     | cons x xs ih =>
-      cases ih
-      . simp [ih, h]
-      . simp [ih, h]
+      intro h
+      cases h
+      . simp
+      . simp
+        have h2 : List.Mem (cons b bs) (cons true x :: helpGR xs) := by assumption
+        cases h2
+        . simp
+        . have h3 : List.Mem (cons b bs) (helpGR xs) := by assumption
+          apply Or.inr
+          apply ih h3
+
+theorem Subset.t7 {n : Nat} {b : Bool} {bs : Subset n} {l : List (Subset n)} {h : bs ∉ l} :
+  cons b bs ∉ helpGR l := sorry -- doesn't work unless have LawfulBEq for Subsets or Decidable mem
+    -- let xs : List (Subset (n+1)) := helpGR l
+    -- if h1 : List.elem (cons b bs) xs then
+    --   have h2 : (cons b bs) ∈ xs := List.mem_of_elem_eq_true h1
+    --   have : bs ∈ l := t6 h2
+    --   by contradiction
+    -- else
+    --   sorry --have h2 : (cons b bs) ∉ xs := List.mem_of_elem_eq_true h1
 
 theorem Subset.temp {n : Nat} {b : Bool} {bs : Subset n} {l : List (Subset n)} :
   l.UniqMem bs → (helpGR l).UniqMem (cons b bs) := by
@@ -115,15 +131,15 @@ theorem Subset.temp {n : Nat} {b : Bool} {bs : Subset n} {l : List (Subset n)} :
         match b with
         | true =>
           have : List.UniqMem (cons true bs) (helpGR (bs::xs)) = List.UniqMem (cons true bs) (cons false bs :: cons true bs :: helpGR xs) := by rfl
-          -- have : (cons true bs) ∉ helpGR xs := by
-            -- induction xs with
-            -- | nil => nofun
-            -- | cons y ys ih' =>
-            --   have : helpGR (y::ys) = (cons false y :: cons true y :: helpGR ys) := by rfl
-            --   have : bs ≠ y := by assumption
-            --   match b with
-            --   | false =>
-            --     rw [h2]
+          have : (cons true bs) ∉ helpGR xs := by
+            induction xs with
+            | nil => nofun
+            | cons y ys ih' => sorry
+              -- have : helpGR (y::ys) = (cons false y :: cons true y :: helpGR ys) := by rfl
+              -- have : bs ≠ y := by assumption
+              -- match b with
+              -- | false =>
+              --   rw [h2]
           sorry
           -- have : List.UniqMem (cons true bs) (cons true bs :: helpGR xs) := by simp [List.UniqMem]
         | false => sorry
