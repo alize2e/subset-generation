@@ -41,22 +41,10 @@ theorem Subset.eqT_BV_IS {n m l : Nat} {as : Subset n} {b : Bool} {bs : Subset m
     | nil => rfl
     | cons a as' ih =>
       match s with
-      | nil =>
-        calc eqTransport nil (append (cons a as') (cons b bs))
-          _ = false := by rfl
+      | nil => rfl
       | cons x xs =>
         match x, a with
-        | true, true =>
-          calc eqTransport (cons true xs) (append (cons true as') (cons b bs))
-            _ = eqTransport xs (append as' (cons b bs)) := by rfl
-            _ = eqTransport xs (append (append as' (cons b nil)) bs) := by rw [ih]
-        | false, false =>
-          calc eqTransport (cons false xs) (append (cons false as') (cons b bs))
-            _ = eqTransport xs (append as' (cons b bs)) := by rfl
-            _ = eqTransport xs (append (append as' (cons b nil)) bs) := by rw [ih]
-        | true, false =>
-          calc eqTransport (cons true xs) (append (cons false as') (cons b bs))
-            _ = false := by rfl
-        | false, true =>
-          calc eqTransport (cons false xs) (append (cons true as') (cons b bs))
-            _ = false := by rfl
+        | true, true => simp [eqTransport, ih]
+        | false, false => simp [eqTransport, ih]
+        | true, false => rfl
+        | false, true => rfl
