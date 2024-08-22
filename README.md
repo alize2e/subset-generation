@@ -25,10 +25,12 @@ GrayItProof, GrayItSorry, and GrayItValProof:
 
 GrayRec, GrayRecComp, and GrayRecSlides
 - GrayRec and GrayRecSlides have a:
-  - function (`genGray` and `grayRecSlides`, respectively) which generate the Gray code recursively. `genGray` is based on the "algorithm" suggested by (5) on page 283 of the Knuth book, while `grayRecSlides` uses the algorithm from the CSE102 slides
+  - function (`genGray` and `grayRecSlides`, respectively) which generates the Gray code recursively. `genGray` is based on the "algorithm" suggested by (5) on page 283 of the Knuth book, while `grayRecSlides` uses the algorithm from the CSE102 slides
   - proof that any `Subset n` is in the output of `genGray n`/`grayRecSlides n`
   - proof that the output of `genGray n`/`grayRecSlides n` is of length 2^n
   - proof of some sort of symmetry of the helper function
-- 
+- GrayRecComp: proof that `genGray n = grayRecSlides n`
+
+IsoVecB and IsoFun
 
 (Note: "the Knuth book" refers to _The Art of Computer Programming, Volume 4A, Combinatorial Algorithms, Part 1_ by Donald E. Knuth.)
