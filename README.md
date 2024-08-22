@@ -9,7 +9,7 @@ ConvertGrayPlainIt
 - functions `φ` and `ψ` such that (although I have not proven this)
   - `(Subset.grayIt n).map Subset.φ = Subset.genIt n`
   - `(Subset.genIt n).map Subset.ψ = Subset.grayIt n`
-- proofs that the compositions of these functions yields the identity map
+- proofs that the compositions of these functions yield the identity
 - next steps: edit `grayRec` (or `grayRecSlides`) and `genRec` so that they actually correspond with these functions (lsb is not the same in each), and prove how `φ` and `ψ` relate the outputs of `grayRec` and `genRec`
 
 EqTransport
