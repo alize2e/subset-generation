@@ -1,6 +1,6 @@
 -- random theorems i tried to prove, mostly involving casting, plus one about binval where idk why it doesn't allow rfl
 
-import «Subsets».SubsetBinVal
+import «Subsets».BinVal
 
 def s' := Subset.cons true (Subset.cons true (Subset.cons false Subset.nil))
 #eval s'
@@ -9,14 +9,14 @@ def s' := Subset.cons true (Subset.cons true (Subset.cons false Subset.nil))
 
 def Subset.eq2 {n m : Nat} (a : Subset n) (b : Subset m) {eq : n=m} : Bool := a == b.cast eq
 
-def Subset.eqTransport {n m : Nat} (eq : n=m) : Subset n → Subset m → Bool
-  | nil, nil => true
-  | cons a as, cons b bs =>
-    have eq' : as.card = bs.card :=
-      calc as.card
-        _ = as.card+1-1 := by rfl
-        _ = bs.card+1-1 := by rw [eq]
-    a==b && (eqTransport eq' as bs)
+-- def Subset.eqTransportOld {n m : Nat} (eq : n=m) : Subset n → Subset m → Bool
+--   | nil, nil => true
+--   | cons a as, cons b bs =>
+--     have eq' : as.card = bs.card :=
+--       calc as.card
+--         _ = as.card+1-1 := by rfl
+--         _ = bs.card+1-1 := by rw [eq]
+--     a==b ∧ (eqTransportOld eq' as bs)
 
 -- theorem Subset.t {n l r : Nat} {eq_len : l+r=n} (lastStart : Subset l) (xsr : Subset r)
 --   (soFar0 : Subset n) (h : ∀ i : Fin n, (lastStart.append xsr).toFun i = soFar0.toFun i) :
