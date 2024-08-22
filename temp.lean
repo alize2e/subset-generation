@@ -1,4 +1,4 @@
-import «Subsets».SubsetBinVal
+import «Subsets».BinVal
 
 def Subset.genIt (n : Nat) : List (Subset n) :=
   let rec help {l r : Nat} (xsl : Subset l) (xsr : Subset r) (soFar : List (Subset n))
