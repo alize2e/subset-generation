@@ -119,4 +119,16 @@ theorem Subset.genGray_num {n : Nat} : (genGray n).length = 2^n :=
       _ = 2*(2^n') := by rw [ih]
       _ = 2^n'.succ := by rw [Nat.pow_succ']
 
+theorem Subset.helpGG_symmetry {n : Nat} {l : List (Subset n)} {soFar : List (Subset (n+1))} :
+  helpGG l soFar = (l.map (cons false)) ++ List.reverseAux (l.map (cons true)) soFar := by
+    induction l generalizing soFar with
+    | nil => rfl
+    | cons x xs ih =>
+      calc helpGG (x::xs) soFar
+        _ = (cons false x) :: helpGG xs ((cons true x) :: soFar) := by rfl
+        _ = (cons false x) :: (xs.map (cons false)) ++ List.reverseAux (xs.map (cons true)) ((cons true x) :: soFar) := by simp [ih]
+        _ = ((x::xs).map (cons false)) ++ List.reverseAux (xs.map (cons true)) ((cons true x) :: soFar) := by rfl
+        _ = ((x::xs).map (cons false)) ++ List.reverseAux ((cons true x)::xs.map (cons true)) soFar := by rfl
+        _ = ((x::xs).map (cons false)) ++ List.reverseAux ((x::xs).map (cons true)) soFar := by rfl
+
 #eval Subset.genGray 3
