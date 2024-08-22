@@ -1,5 +1,61 @@
 import Subsets.GrayRecComp
 
+
+
+-- copied from documentation (idk why not imported), for everything below
+theorem Nat.sub_one_add_one_eq_of_pos : ∀ {n}, 0 < n → (n - 1) + 1 = n
+  | _+1, _ => rfl
+
+theorem Nat.sub_lt_sub_right : ∀ {a b c : Nat}, c ≤ a → a < b → a - c < b - c
+  | 0, _, _, hle, h => by
+    rw [Nat.eq_zero_of_le_zero hle, Nat.sub_zero, Nat.sub_zero]
+    exact h
+  | _, _, 0, _, h => by
+    rw [Nat.sub_zero, Nat.sub_zero]
+    exact h
+  | _+1, _+1, _+1, hle, h => by
+    rw [Nat.add_sub_add_right, Nat.add_sub_add_right]
+    exact Nat.sub_lt_sub_right (le_of_succ_le_succ hle) (lt_of_succ_lt_succ h)
+
+theorem Nat.sub_one_sub_lt_of_lt (h : a < b) : b - 1 - a < b := by
+  rw [← Nat.sub_add_eq]
+  exact sub_lt (zero_lt_of_lt h) (Nat.lt_add_right a Nat.one_pos)
+
+theorem Nat.le_of_lt_add_one {n m : Nat} : n < m + 1 → n ≤ m := le_of_succ_le_succ
+
+-- added axiom because theorem is in documentation but not imported
+theorem List.sorry_getElem_reverse {α : Type} {l : List α} {i} (h : i < l.reverse.length) :
+    l.reverse[i] = l[l.length - 1 - i]'(Nat.sub_one_sub_lt_of_lt (by simpa using h)) := sorry -- List.getElem_reverse
+
+-- made my own proofs because not imported
+theorem List.diy_get_map (α β : Type) (f : α → β) (l : List α) (i : Nat) {h : i<l.length} : (l.map f)[i]'(by simp[h]) = f l[i] := by
+  induction i generalizing l with
+  | zero =>
+    match l with
+    | x::xs => rfl
+  | succ i' ih =>
+    have : i'.succ<(l.map f).length := by simp [h]
+    match l with
+    | x::xs =>
+      have : (xs.map f).length.succ = ((x::xs).map f).length := by rfl
+      have : (xs.map f).length = xs.length := by simp
+      calc ((x::xs).map f)[i'.succ]
+        _ = (xs.map f)[i'] := by simp
+        _ = f xs[i'] := by rw [ih]
+
+theorem List.diy_reverse_zero_last {α : Type} {l : List α} {h : 0<l.length} {h' : l.reverse.length-1<l.reverse.length} : l.reverse[l.reverse.length-1] = l[0] := by
+  match l with
+  | x::xs =>
+    have : (x::xs).reverse = xs.reverse++[x] := List.reverse_cons x xs
+    have : ¬ (xs.reverse++[x]).length-1 < xs.reverse.length := by simp
+    calc (x::xs).reverse[(x::xs).reverse.length-1]
+      _ = (xs.reverse++[x])[(xs.reverse++[x]).length-1] := by simp
+      _ = x := List.get_last this
+      _ = (x::xs)[0] := by simp
+
+
+
+-- num_changes and related lemmas
 def Subset.num_changes {n : Nat} : Subset n → Subset n → Nat
   | nil, nil => 0
   | cons true as, cons true bs => num_changes as bs
@@ -46,44 +102,121 @@ theorem Subset.eq_num_changes_eq_zero {n : Nat} {as : Subset n} : num_changes as
     rw [this]
     rw [ih]
 
--- List.get_map not imported, and not working ://///
-theorem List.diy_get_map (α β : Type) (f : α → β) (l : List α) (i : Nat) {h : i<l.length} : (l.map f)[i]'(by simp[h]) = f l[i] := by
-  induction i generalizing l with
-  | zero =>
-    match l with
-    | x::xs => rfl
-  | succ i' ih =>
-    have : i'.succ<(l.map f).length := by simp [h]
-    match l with
-    | x::xs =>
-      have : (xs.map f).length.succ = ((x::xs).map f).length := by rfl
-      have : (xs.map f).length = xs.length := by simp
-      calc ((x::xs).map f)[i'.succ]
-        _ = (xs.map f)[i'] := by simp
-        _ = f xs[i'] := by rw [ih]
 
-theorem List.diy_reverse_zero_last {α : Type} {l : List α} {h : 0<l.length} {h' : l.reverse.length-1<l.reverse.length} : l.reverse[l.reverse.length-1] = l[0] := by
+
+-- copied from GrayRec
+theorem Subset.helpGG_num {n : Nat} : ∀ l : List (Subset n),
+  ∀ soFar : List (Subset (n+1)), (helpGG l soFar).length = 2*l.length + soFar.length := by
+    intro l
+    induction l with
+    | nil =>
+      intro soFar
+      calc (helpGG List.nil soFar).length
+        _ = soFar.length := by rfl
+        _ = 2*List.nil.length + soFar.length := by simp_arith
+    | cons x xs ih =>
+      intro soFar
+      calc (helpGG (x::xs) soFar).length
+        _ = ((cons false x) :: (helpGG xs (cons true x :: soFar))).length := by rfl
+        _ = 1 + (helpGG xs (cons true x :: soFar)).length := by simp_arith
+        _ = 1 + 2*(xs.length) + ((cons true x) :: soFar).length := by simp_arith [ih]
+        _ = 2 + 2*(xs.length) + soFar.length := by simp_arith
+        _ = 2*(x::xs).length + soFar.length := by simp_arith
+
+theorem Subset.genGray_num (n : Nat) : (genGray n).length = 2^n :=
+  by induction n with
+  | zero => rfl
+  | succ n' ih =>
+    calc (genGray n'.succ).length
+      _ = (helpGG (genGray n') []).length := by rfl
+      _ = 2*(genGray n').length + [].length := by rw [helpGG_num]
+      _ = 2*(genGray n').length := by rfl
+      _ = 2*(2^n') := by rw [ih]
+      _ = 2^n'.succ := by rw [Nat.pow_succ']
+
+
+
+-- GrayCodeProof–specific lemmas
+theorem Subset.s0 (n' : Nat) : 0<(grayRecSlides n').length :=
+  calc 0
+    _ < 2^n' := Nat.two_pow_pos n'
+    _ = (genGray n').length := by simp [genGray_num n']
+    _ = (grayRecSlides n').length := by rw [gray_rec_eq]
+
+theorem s1 {l i : Nat} (h : 0<l) : l-1-(i-l)<l := -- h is (s0 n'), so s1 (s0 n')
+  calc l-1-(i-l)
+    _ ≤ l-1 := Nat.sub_le (l-1) (i-l)
+    _ < l := Nat.pred_lt_self h
+
+theorem s2' {l i : Nat} (h1 : i.succ<2*l) (h2 : l<i.succ) : 1<l :=
   match l with
-  | x::xs =>
-    have : (x::xs).reverse = xs.reverse++[x] := List.reverse_cons x xs
-    have : ¬ (xs.reverse++[x]).length-1 < xs.reverse.length := by simp
-    calc (x::xs).reverse[(x::xs).reverse.length-1]
-      _ = (xs.reverse++[x])[(xs.reverse++[x]).length-1] := by simp
-      _ = x := List.get_last this
-      _ = (x::xs)[0] := by simp
+  | Nat.zero =>
+    have : i.succ < 0 := by simp_arith [h1]
+    by contradiction
+  | Nat.succ l' =>
+    if h' : l' = 0 then
+      have : 1<i.succ :=
+        calc 1
+          _ ≤ l'.succ := by simp_arith
+          _ < i.succ := h2
+      have : 2≤i.succ := by simp_arith [this, Nat.succ_le_of_lt]
+      have : i.succ<2 :=
+        calc i.succ
+          _ < 2*l'.succ := h1
+          _ = 2 := by simp_arith [h']
+      have : 2<2 :=
+        calc 2
+          _ ≤ i.succ := by assumption
+          _ < 2 := by assumption
+      by contradiction
+    else
+      have : l'>0 := Nat.pos_of_ne_zero h'
+      calc 1
+        _ < 1+l' := Nat.lt_add_of_pos_right this
+        _ = l'.succ := by simp_arith
 
--- copied from documentation, idk why not imported
-theorem Nat.sub_one_add_one_eq_of_pos : ∀ {n}, 0 < n → (n - 1) + 1 = n
-  | _+1, _ => rfl
+theorem s2 {l i : Nat} (h1 : l<i.succ) (h2 : 1<l) : l-1-(i.succ-l)<l-1 := -- h1 is h15, h2 is (s2' h16 h15), so s2 h15 (s2' h16 h15)
+  have : 0<i.succ-l ↔ l<i.succ := by simp [Nat.sub_pos_iff_lt]
+  have h1' : i.succ-l > 0 := by simp [this, h1]
+  have : 0<l-1 ↔ 1<l := by simp [Nat.sub_pos_iff_lt]
+  have h2' : l-1 > 0 := by simp [this, h2]
+  Nat.sub_lt h2' h1'
 
--- idk why not imported from documentation
-theorem Nat.sub_lt_sub_right : ∀ {a b c : Nat}, c ≤ a → a < b → a - c < b - c
-  | 0, _, _, hle, h => by
-    rw [Nat.eq_zero_of_le_zero hle, Nat.sub_zero, Nat.sub_zero]
-    exact h
-  | _, _, 0, _, h => by
-    rw [Nat.sub_zero, Nat.sub_zero]
-    exact h
-  | _+1, _+1, _+1, hle, h => by
-    rw [Nat.add_sub_add_right, Nat.add_sub_add_right]
-    exact Nat.sub_lt_sub_right (le_of_succ_le_succ hle) (lt_of_succ_lt_succ h)
+theorem t16 (a : Nat) (_ : 0 < a) : a-1+1=a := by
+  match a with
+  | a'+1 => simp_arith
+
+theorem t17 (a b : Nat) (h1 : b<a) : a-(1+b)+1 = a-b := by
+  induction b generalizing a with
+  | zero => simp [t16 a (by simp [h1])]
+  | succ b' ih =>
+    have : b'.succ ≠ 0 := by simp_arith
+    have h1' : b' < a-1 :=
+      calc b'
+        _ = b'.succ-1 := by simp_arith
+        _ < a-1 := Nat.pred_lt_pred this h1
+    calc a-(1+b'.succ)+1
+      _ = a-(1+b'+1)+1 := by simp_arith
+      _ = a-(1+b')-1+1 := by simp_arith [Nat.sub_add_eq]
+      _ = a-1-(1+b')+1 := by simp_arith [Nat.sub_right_comm]
+      _ = a-1-b' := by simp [ih, h1']
+      _ = a-(1+b') := by simp_arith [Nat.sub_add_eq]
+      _ = a-b'.succ := by simp_arith [Nat.add_comm]
+
+theorem s3 {l i : Nat} (h1 : i.succ<2*l) (h2 : l<i.succ) : (l-1-(i.succ-l)).succ = l-1-(i-l) := -- h1 is h16, h2 is h15, so s3 h16 h15
+  have : l+1<i.succ+1 := Nat.add_lt_add_right h2 1
+  have : l+1≤Nat.succ i := Nat.le_of_lt_add_one this
+  have : i-l<l-1 :=
+    calc i-l
+      _ = i.succ-1-l := by simp_arith
+      _ = i.succ-l-1 := Nat.sub_right_comm i.succ 1 l
+      _ = i.succ-(l+1) := Nat.sub_add_eq i.succ l 1
+      _ < 2*l-(l+1) := Nat.sub_lt_sub_right this h1
+      _ = l+l-(l+1) := by rw [Nat.two_mul l]
+      _ = l+l-l-1 := Nat.sub_add_eq (l+l) l 1
+      _ = l-1 := by simp
+  calc Nat.succ (l - 1 - (Nat.succ i - l))
+    _ = l - 1 - (i + 1 - l) + 1 := by simp_arith
+    _ = l - 1 - (1 + i - l) + 1 := by rw [Nat.add_comm i 1]
+    _ = l - 1 - (1 + (i - l)) + 1 := by rw [Nat.add_sub_assoc (Nat.le_of_lt_add_one h2 : l≤i) 1]
+    _ = l - 1 - (i - l) := t17 (l-1) (i-l) this
