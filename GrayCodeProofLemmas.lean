@@ -91,19 +91,51 @@ theorem Nat.sub_one_sub_lt_of_lt (h : a < b) : b - 1 - a < b := by
   rw [← Nat.sub_add_eq]
   exact sub_lt (zero_lt_of_lt h) (Nat.lt_add_right a Nat.one_pos)
 
--- @[simp] theorem List.get?_eq_getElem? (l : List α) (i : Nat) : l.get? i = l[i]? := by
---   simp only [getElem?, decidableGetElem?]; split
---   · exact (get?_eq_get ‹_›)
---   · exact (get?_eq_none.2 <| Nat.not_lt.1 ‹_›)
 
--- @[simp] theorem List.getElem?_eq_getElem {l : List α} {n} (h : n < l.length) : l[n]? = some l[n] := by
---   simp only [← get?_eq_getElem?, get?_eq_get, h, get_eq_getElem]
 
--- @[simp] theorem List.getElem_reverse {l : List α} {i} (h : i < l.reverse.length) :
---     l.reverse[i] = l[l.length - 1 - i]'(Nat.sub_one_sub_lt_of_lt (by simpa using h)) := by
---       apply Option.some.inj
---       rw [← getElem?_eq_getElem, ← getElem?_eq_getElem]
---       rw [getElem?_reverse (by simpa using h)]
+
+
+theorem Subset.helpGG_num {n : Nat} : ∀ l : List (Subset n),
+  ∀ soFar : List (Subset (n+1)), (helpGG l soFar).length = 2*l.length + soFar.length := by
+    intro l
+    induction l with
+    | nil =>
+      intro soFar
+      calc (helpGG List.nil soFar).length
+        _ = soFar.length := by rfl
+        _ = 2*List.nil.length + soFar.length := by simp_arith
+    | cons x xs ih =>
+      intro soFar
+      calc (helpGG (x::xs) soFar).length
+        _ = ((cons false x) :: (helpGG xs (cons true x :: soFar))).length := by rfl
+        _ = 1 + (helpGG xs (cons true x :: soFar)).length := by simp_arith
+        _ = 1 + 2*(xs.length) + ((cons true x) :: soFar).length := by simp_arith [ih]
+        _ = 2 + 2*(xs.length) + soFar.length := by simp_arith
+        _ = 2*(x::xs).length + soFar.length := by simp_arith
+
+theorem Subset.genGray_num (n : Nat) : (genGray n).length = 2^n :=
+  by induction n with
+  | zero => rfl
+  | succ n' ih =>
+    calc (genGray n'.succ).length
+      _ = (helpGG (genGray n') []).length := by rfl
+      _ = 2*(genGray n').length + [].length := by rw [helpGG_num]
+      _ = 2*(genGray n').length := by rfl
+      _ = 2*(2^n') := by rw [ih]
+      _ = 2^n'.succ := by rw [Nat.pow_succ']
+
+theorem Subset.s0 (n' : Nat) : 0<(grayRecSlides n').length :=
+  calc 0
+    _ < 2^n' := Nat.two_pow_pos n'
+    _ = (genGray n').length := by simp [genGray_num n']
+    _ = (grayRecSlides n').length := by rw [gray_rec_eq]
+
+theorem s1 {l i : Nat} (h : 0<l) : l-1-(i-l)<l := -- h is (s0 n'), so s1 (s0 n')
+  calc l-1-(i-l)
+    _ ≤ l-1 := Nat.sub_le (l-1) (i-l)
+    _ < l := Nat.pred_lt_self h
+
+
 
 -- theorem Subset.GRS_1_change_mid (n' : Nat) (i : Nat) (h : i.succ < (grayRecSlides n'.succ).length) (succ_i_eq_map_len : i.succ = ((grayRecSlides n').map (cons false)).length) :
 --   num_changes (grayRecSlides n'.succ)[i] (grayRecSlides n'.succ)[i+1] = 1 := by
