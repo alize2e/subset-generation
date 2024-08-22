@@ -136,6 +136,22 @@ theorem Subset.genGray_num (n : Nat) : (genGray n).length = 2^n :=
 
 
 
+-- copied from GrayRecSlides
+theorem Subset.grayRecSlides_num {n : Nat} : (grayRecSlides n).length = 2^n := by
+  induction n with
+  | zero => rfl
+  | succ n' ih =>
+    calc (grayRecSlides n'.succ).length
+      _ = (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true))).length := by rw [grayRecSlides_IS n']
+      _ = ((grayRecSlides n').map (cons false)).length + ((grayRecSlides n').reverse.map (cons true)).length := by simp
+      _ = (grayRecSlides n').length + (grayRecSlides n').reverse.length := by simp
+      _ = (grayRecSlides n').length + (grayRecSlides n').length := by simp
+      _ = 2*(grayRecSlides n').length := by simp_arith
+      _ = 2*2^n' := by rw [ih]
+      _ = 2^n'.succ := by rw [Nat.pow_succ']
+
+
+
 -- GrayCodeProof–specific lemmas
 theorem Subset.s0 (n' : Nat) : 0<(grayRecSlides n').length :=
   calc 0
