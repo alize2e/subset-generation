@@ -40,7 +40,7 @@ theorem Subset.grayRecSlides_one_change_next {n : Nat} {i : Nat} {h : i.succ<(gr
               _ = (grayRecSlides n').reverse.length := by simp
           have succ_i_in_right : (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i.succ] = ((grayRecSlides n').reverse.map (cons true))[i.succ-((grayRecSlides n').map (cons false)).length] := List.get_append_right ((grayRecSlides n').map (cons false)) ((grayRecSlides n').reverse.map (cons true)) (by assumption)
           have i_in_right : (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i] = ((grayRecSlides n').reverse.map (cons true))[i-((grayRecSlides n').map (cons false)).length] := List.get_append_right ((grayRecSlides n').map (cons false)) ((grayRecSlides n').reverse.map (cons true)) (by assumption)
-          have : List.length (grayRecSlides n') - 1 - (i - List.length (grayRecSlides n')) < List.length (grayRecSlides n') := sorry
+          have : List.length (grayRecSlides n') - 1 - (i - List.length (grayRecSlides n')) < List.length (grayRecSlides n') := s1 (s0 n')
           have : Nat.succ (List.length (grayRecSlides n') - 1 - (Nat.succ i - List.length (grayRecSlides n'))) < List.length (grayRecSlides n') := sorry
           calc num_changes (grayRecSlides n'.succ)[i] (grayRecSlides n'.succ)[i.succ]
             _ = num_changes (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i] (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i.succ] := by simp [grayRecSlides_IS n']
