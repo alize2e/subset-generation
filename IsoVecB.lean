@@ -2,6 +2,7 @@ import «Subsets».SubsetDef
 
 -- type definitions
 
+-- copied from "Functional Programming in Lean"
 inductive Vect (α : Type u) : Nat → Type u where
    | nil : Vect α 0
    | cons : α → Vect α n → Vect α (n + 1)
