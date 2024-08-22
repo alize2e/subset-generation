@@ -31,6 +31,19 @@ theorem t17 (a b : Nat) (h1 : b<a) : a-(1+b)+1 = a-b := by
 
 example {a b c : Nat} (h : c≤b) : a+b-c = a+(b-c) := Nat.add_sub_assoc h a
 
+theorem s1 {l i : Nat} {h : 0<l} : l-1-(i-l)<l :=
+  calc l-1-(i-l)
+    _ ≤ l-1 := Nat.sub_le (l-1) (i-l)
+    _ < l := Nat.pred_lt_self h
+
+theorem s2 {l i : Nat} {h1 : l<i.succ} {h2 : l > 1} : l-1-(i.succ-l)<l-1 := -- h1 is h4
+  have : 0<i.succ-l ↔ l<i.succ := by simp [Nat.sub_pos_iff_lt]
+  have h1' : i.succ-l > 0 := by simp [this, h1]
+  have : 0<l-1 ↔ 1<l := by simp [Nat.sub_pos_iff_lt]
+  have h2' : l-1 > 0 := by simp [this, h2]
+  Nat.sub_lt h2' h1'
+
+
 -- theorem t19 {l i : Nat} {h1 : i<2*l} {h2 : l≤i} {h3 : l≥1} : (l-1-(i.succ-l)).succ = l-1-(i-l) :=
 --   have h4 : i≥l := by assumption
 --   have h5 : i-l < l-1 := by skip -- currently false because could have i = 2l-1
@@ -41,13 +54,13 @@ example {a b c : Nat} (h : c≤b) : a+b-c = a+(b-c) := Nat.add_sub_assoc h a
 --     _ = l-1-(1+(i-l))+1 := by rw [Nat.add_sub_assoc h2 1]
 --     _ = l-1-(i-l) := t17 (l-1) (i-l) h5
 
-theorem t19' {l i : Nat} {h1 : i<2*l-1} {h2 : l≤i} {h3 : l≥1} : (l-1-(i.succ-l)).succ = l-1-(i-l) :=
-  have h4 : i≥l := by assumption
-  have h5 : i-l < l-1 := by skip -- now cannot have i = 2l-1
-  calc (l-1-(i.succ-l)).succ
-    _ = l-1-(1+i-l)+1 := by simp_arith [Nat.add_comm]
-    _ = l-1-(1+(i-l))+1 := by rw [Nat.add_sub_assoc h2 1]
-    _ = l-1-(i-l) := t17 (l-1) (i-l) h5
+-- theorem t19' {l i : Nat} {h1 : i<2*l-1} {h2 : l≤i} {h3 : l≥1} : (l-1-(i.succ-l)).succ = l-1-(i-l) :=
+--   have h4 : i≥l := by assumption
+--   have h5 : i-l < l-1 := by skip -- now cannot have i = 2l-1
+--   calc (l-1-(i.succ-l)).succ
+--     _ = l-1-(1+i-l)+1 := by simp_arith [Nat.add_comm]
+--     _ = l-1-(1+(i-l))+1 := by rw [Nat.add_sub_assoc h2 1]
+--     _ = l-1-(i-l) := t17 (l-1) (i-l) h5
 
 -- theorem FALSE_t19'' {l i : Nat} {h1 : i=2*l-1} {h2 : l≥1} : (l-1-(i.succ-l)).succ = l-1-(i-l) := -- !!!!!FALSE!!!!!!
 --   calc (l-1-(i.succ-l)).succ
