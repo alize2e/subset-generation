@@ -123,3 +123,15 @@ theorem Subset.grayRecSlides_one_change_next {n : Nat} {i : Nat} {h : i.succ<(gr
           exact (c2 n' i (by assumption) h (by assumption))
         else
           exact (c3 n' i ih (by assumption) h (by assumption) (by assumption))
+
+theorem Subset.genGray_one_change_next {n : Nat} {i : Nat} {h : i.succ<(genGray n).length} :
+  num_changes (genGray n)[i] (genGray n)[i+1] = 1 := by
+    have : i.succ<(grayRecSlides n).length :=
+      calc i.succ
+        _ < (genGray n).length := h
+        _ = (grayRecSlides n).length := by rw [gray_rec_eq]
+    have h1 : (genGray n)[i] = (grayRecSlides n)[i] := by simp only [gray_rec_eq n]
+    have h2 : (genGray n)[i+1] = (grayRecSlides n)[i+1] := by simp only [gray_rec_eq n]
+    calc num_changes (genGray n)[i] (genGray n)[i+1]
+      _ = num_changes (grayRecSlides n)[i] (grayRecSlides n)[i+1] := by simp only [h1,h2]
+      _ = 1 := grayRecSlides_one_change_next
