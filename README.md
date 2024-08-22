@@ -16,7 +16,7 @@ GrayCodeProof and GrayCodeProofLemmas:
 - last step: figure out how to update Lean so I can remove `sorry_getElem_reverse` and rest of lemmas that should be imported from GrayCodeProofLemmas
 
 GrayItProof, GrayItSorry, and GrayItValProof:
-- GrayItSorry and GrayItProof have an iterative algorithms, `grayIt`, for Gray code generation with an outline for termination proof that depends on `sorry`s – the outline in GrayItSorry is simpler, and that in GrayItProof has more proofs / is further along
+- GrayItSorry and GrayItProof have an iterative algorithm, `grayIt`, for Gray code generation that is based on "Algorithm G" from page 286 of the Knuth book. They also include an outline for a proof of termination that depends on `sorry`s – the outline in GrayItSorry is simpler, and that in GrayItProof has more proofs / is further along
 - GrayItValProof has some functions and lemmas used in GrayItProof
 - next steps:
   - continue GrayItProof by trying to figure out why it wants a proof of `(grayVal 1 (cons (!a₀) as)).fst+1 ≤ (grayVal 1 a).fst` rather than of `(grayVal 1 (cons (!a₀) as)).fst+1 ≤ (grayVal 1 (cons (a₀) as)).fst`
@@ -24,10 +24,11 @@ GrayItProof, GrayItSorry, and GrayItValProof:
   - finish proving termination
 
 GrayRec, GrayRecComp, and GrayRecSlides
-- function `genGray` which generates the Gray code recursively based on the "algorithm" suggested by (5) on page 283 of the Knuth book
-- proof that any `Subset n` is in the output of `genGray n`
-- proof that the output of `genGray n` is of length 2^n
+- GrayRec and GrayRecSlides have a:
+  - function (`genGray` and `grayRecSlides`, respectively) which generate the Gray code recursively. `genGray` is based on the "algorithm" suggested by (5) on page 283 of the Knuth book, while `grayRecSlides` uses the algorithm from the CSE102 slides
+  - proof that any `Subset n` is in the output of `genGray n`/`grayRecSlides n`
+  - proof that the output of `genGray n`/`grayRecSlides n` is of length 2^n
+  - proof of some sort of symmetry of the helper function
+- 
 
-
-
-  (Note: "the Knuth book" refers to _The Art of Computer Programming, Volume 4A, Combinatorial Algorithms, Part 1_ by Donald E. Knuth.)
+(Note: "the Knuth book" refers to _The Art of Computer Programming, Volume 4A, Combinatorial Algorithms, Part 1_ by Donald E. Knuth.)
