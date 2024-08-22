@@ -97,6 +97,11 @@ theorem Nat.le_of_lt_add_one {n m : Nat} : n < m + 1 → n ≤ m := le_of_succ_l
 
 
 
+axiom List.sorry_getElem_reverse {α : Type} {l : List α} {i} (h : i < l.reverse.length) :
+    l.reverse[i] = l[l.length - 1 - i]'(Nat.sub_one_sub_lt_of_lt (by simpa using h)) -- List.getElem_reverse
+
+
+
 theorem Subset.helpGG_num {n : Nat} : ∀ l : List (Subset n),
   ∀ soFar : List (Subset (n+1)), (helpGG l soFar).length = 2*l.length + soFar.length := by
     intro l
