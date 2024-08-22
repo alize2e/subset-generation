@@ -59,6 +59,6 @@ SubsetsOfLists
 UniqMem
 - definition of `UniqMem`
 - attempts at proofs involving `UniqMem` (namely in the goal of proving that each `Subset n` occurs in `genRec n` etc. exactly once)
-- probably unnecessary / a lot easier if I manage to update Lean and gain access to some of the newer theorems and definitions, especially Nodup
+- probably unnecessary / a lot easier if I manage to update Lean and gain access to some of the newer theorems and definitions, especially `List.Nodup`
 
 (Note: "the Knuth book" refers to _The Art of Computer Programming, Volume 4A, Combinatorial Algorithms, Part 1_ by Donald E. Knuth.)
