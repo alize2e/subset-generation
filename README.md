@@ -16,7 +16,7 @@ EqTransport
 - part of an attempt to prove termination of `genIt`, but this attempt will likely fail because of casting, so unlikely to be useful
 - defines an equivalence relation between `Subset n`s and `Subset m`s transported along `n=m`, and some lemmas about that
 
-GrayCodeProof and GrayCodeProofLemmas:
+GrayCodeProof and GrayCodeProofLemmas
 - proof that the number of changes between adjacent elements of the output of `grayRecSlides` is exactly 1, which is generalized to `genGray` too
 - last step: figure out how to update Lean so I can remove `sorry_getElem_reverse` and rest of lemmas that should be imported from GrayCodeProofLemmas
 
