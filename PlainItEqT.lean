@@ -1,6 +1,6 @@
 -- use EqTransport
 
-import «Subsets».working.eqTransport
+import «Subsets».working.EqTransport
 
 def Subset.genIt (n : Nat) : List (Subset n) :=
   let rec help {l r l' : Nat} (xsl : Subset l) (xsr : Subset r) (soFar : List (Subset n))
