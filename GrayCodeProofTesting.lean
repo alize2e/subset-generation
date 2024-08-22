@@ -1,4 +1,4 @@
-import Subsets.working.GrayCodeProofLemmas
+import Subsets.GrayRecComp
 
 -- theorem sub_of_sub {a b : Nat} {h1 : b<2*a} {h2 : a≤b} {h3 : a≥1} : a-(b-a) = a-b+a := by
 --   induction a generalizing b with
@@ -31,7 +31,42 @@ theorem t17 (a b : Nat) (h1 : b<a) : a-(1+b)+1 = a-b := by
 
 example {a b c : Nat} (h : c≤b) : a+b-c = a+(b-c) := Nat.add_sub_assoc h a
 
-theorem s1 {l i : Nat} {h : 0<l} : l-1-(i-l)<l :=
+theorem Subset.helpGG_num {n : Nat} : ∀ l : List (Subset n),
+  ∀ soFar : List (Subset (n+1)), (helpGG l soFar).length = 2*l.length + soFar.length := by
+    intro l
+    induction l with
+    | nil =>
+      intro soFar
+      calc (helpGG List.nil soFar).length
+        _ = soFar.length := by rfl
+        _ = 2*List.nil.length + soFar.length := by simp_arith
+    | cons x xs ih =>
+      intro soFar
+      calc (helpGG (x::xs) soFar).length
+        _ = ((cons false x) :: (helpGG xs (cons true x :: soFar))).length := by rfl
+        _ = 1 + (helpGG xs (cons true x :: soFar)).length := by simp_arith
+        _ = 1 + 2*(xs.length) + ((cons true x) :: soFar).length := by simp_arith [ih]
+        _ = 2 + 2*(xs.length) + soFar.length := by simp_arith
+        _ = 2*(x::xs).length + soFar.length := by simp_arith
+
+theorem Subset.genGray_num (n : Nat) : (genGray n).length = 2^n :=
+  by induction n with
+  | zero => rfl
+  | succ n' ih =>
+    calc (genGray n'.succ).length
+      _ = (helpGG (genGray n') []).length := by rfl
+      _ = 2*(genGray n').length + [].length := by rw [helpGG_num]
+      _ = 2*(genGray n').length := by rfl
+      _ = 2*(2^n') := by rw [ih]
+      _ = 2^n'.succ := by rw [Nat.pow_succ']
+
+theorem Subset.s0 (n' : Nat) : 0<(grayRecSlides n').length :=
+  calc 0
+    _ < 2^n' := Nat.two_pow_pos n'
+    _ = (genGray n').length := by simp [genGray_num n']
+    _ = (grayRecSlides n').length := by rw [gray_rec_eq]
+
+theorem s1 {l i : Nat} (h : 0<l) : l-1-(i-l)<l := -- h is (s0 n'), so s1 (s0 n')
   calc l-1-(i-l)
     _ ≤ l-1 := Nat.sub_le (l-1) (i-l)
     _ < l := Nat.pred_lt_self h
