@@ -1,4 +1,4 @@
-import Subsets.working.GrayCodeProofLemmas
+import Subsets.GrayCodeProofLemmas
 
 theorem Subset.c1 (n' i : Nat)
   (ih : ∀ {i : Nat} {h : Nat.succ i < List.length (grayRecSlides n')}, num_changes (grayRecSlides n')[i] (grayRecSlides n')[i + 1] = 1)
