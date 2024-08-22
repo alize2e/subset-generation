@@ -91,6 +91,8 @@ theorem Nat.sub_one_sub_lt_of_lt (h : a < b) : b - 1 - a < b := by
   rw [← Nat.sub_add_eq]
   exact sub_lt (zero_lt_of_lt h) (Nat.lt_add_right a Nat.one_pos)
 
+theorem Nat.le_of_lt_add_one {n m : Nat} : n < m + 1 → n ≤ m := le_of_succ_le_succ
+
 
 
 
@@ -169,7 +171,44 @@ theorem s2 {l i : Nat} (h1 : l<i.succ) (h2 : 1<l) : l-1-(i.succ-l)<l-1 := -- h1 
   have h2' : l-1 > 0 := by simp [this, h2]
   Nat.sub_lt h2' h1'
 
+theorem t16 (a : Nat) (_ : 0 < a) : a-1+1=a := by
+  match a with
+  | a'+1 => simp_arith
 
+theorem t17 (a b : Nat) (h1 : b<a) : a-(1+b)+1 = a-b := by
+  induction b generalizing a with
+  | zero => simp [t16 a (by simp [h1])]
+  | succ b' ih =>
+    have : b'.succ ≠ 0 := by simp_arith
+    have h1' : b' < a-1 :=
+      calc b'
+        _ = b'.succ-1 := by simp_arith
+        _ < a-1 := Nat.pred_lt_pred this h1
+    calc a-(1+b'.succ)+1
+      _ = a-(1+b'+1)+1 := by simp_arith
+      _ = a-(1+b')-1+1 := by simp_arith [Nat.sub_add_eq]
+      _ = a-1-(1+b')+1 := by simp_arith [Nat.sub_right_comm]
+      _ = a-1-b' := by simp [ih, h1']
+      _ = a-(1+b') := by simp_arith [Nat.sub_add_eq]
+      _ = a-b'.succ := by simp_arith [Nat.add_comm]
+
+theorem s3 {l i : Nat} (h1 : i.succ<2*l) (h2 : l<i.succ) : (l-1-(i.succ-l)).succ = l-1-(i-l) := -- h1 is h16, h2 is h15, so s3 h16 h15
+  have : l+1<i.succ+1 := Nat.add_lt_add_right h2 1
+  have : l+1≤Nat.succ i := Nat.le_of_lt_add_one this
+  have : i-l<l-1 :=
+    calc i-l
+      _ = i.succ-1-l := by simp_arith
+      _ = i.succ-l-1 := Nat.sub_right_comm i.succ 1 l
+      _ = i.succ-(l+1) := Nat.sub_add_eq i.succ l 1
+      _ < 2*l-(l+1) := Nat.sub_lt_sub_right this h1
+      _ = l+l-(l+1) := by rw [Nat.two_mul l]
+      _ = l+l-l-1 := Nat.sub_add_eq (l+l) l 1
+      _ = l-1 := by simp
+  calc Nat.succ (l - 1 - (Nat.succ i - l))
+    _ = l - 1 - (i + 1 - l) + 1 := by simp_arith
+    _ = l - 1 - (1 + i - l) + 1 := by rw [Nat.add_comm i 1]
+    _ = l - 1 - (1 + (i - l)) + 1 := by rw [Nat.add_sub_assoc (Nat.le_of_lt_add_one h2 : l≤i) 1]
+    _ = l - 1 - (i - l) := t17 (l-1) (i-l) this
 
 
 -- theorem Subset.GRS_1_change_mid (n' : Nat) (i : Nat) (h : i.succ < (grayRecSlides n'.succ).length) (succ_i_eq_map_len : i.succ = ((grayRecSlides n').map (cons false)).length) :
