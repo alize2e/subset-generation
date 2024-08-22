@@ -1,4 +1,4 @@
-import «Subsets».SubsetBinVal
+import «Subsets».BinVal
 
 def Subset.eqTransport {n m : Nat} : Subset n → Subset m → Bool -- Bool or Prop?
   | nil, nil => true
@@ -49,7 +49,7 @@ theorem Subset.eqT_append_IS {n m l : Nat} {as : Subset n} {b : Bool} {bs : Subs
         | true, false => rfl
         | false, true => rfl
 
-theorem Subset.eqT_self {n : Nat} {s : Subset n} : eqTransport s s = true := by
+theorem Subset.eqT_self {n : Nat} (s : Subset n) : eqTransport s s = true := by
   induction s with
   | nil => rfl
   | cons b bs ih =>
