@@ -21,3 +21,7 @@ GrayItSorry, GrayItProof, and GrayItValProof:
 - GrayItSorry and GrayItProof have iterative algorithms for Gray code generation with an outline for termination proof with "sorry"s – the
   outline for GrayItSorry is simpler, and that for GrayItProof has more things proved / is further along
 - GrayItValProof has some functions and lemmas used in GrayItProof
+- next steps:
+  - continue GrayItProof by trying to figure out why it wants a proof of "(grayVal 1 (cons (!a₀) as)).fst+1 ≤ (grayVal 1 a).fst"
+    rather than "(grayVal 1 (cons (!a₀) as)).fst+1 ≤ (grayVal 1 (cons (a₀) as)).fst"
+  - figure out how to prove stuff about minLeft1? to use for a proof of dec_case_2
