@@ -71,7 +71,7 @@ theorem s1 {l i : Nat} (h : 0<l) : l-1-(i-l)<l := -- h is (s0 n'), so s1 (s0 n')
     _ ≤ l-1 := Nat.sub_le (l-1) (i-l)
     _ < l := Nat.pred_lt_self h
 
-theorem s2' {l i : Nat} {h1 : i.succ<2*l} {h2 : i.succ>l} : 1<l :=
+theorem s2' {l i : Nat} (h1 : i.succ<2*l) (h2 : l<i.succ) : 1<l :=
   match l with
   | Nat.zero =>
     have : i.succ < 0 := by simp_arith [h1]
@@ -98,13 +98,12 @@ theorem s2' {l i : Nat} {h1 : i.succ<2*l} {h2 : i.succ>l} : 1<l :=
         _ < 1+l' := Nat.lt_add_of_pos_right this
         _ = l'.succ := by simp_arith
 
-theorem s2 {l i : Nat} {h1 : l<i.succ} {h2 : 1<l} : l-1-(i.succ-l)<l-1 := -- h1 is h15
+theorem s2 {l i : Nat} (h1 : l<i.succ) (h2 : 1<l) : l-1-(i.succ-l)<l-1 := -- h1 is h15, h2 is (s2' h16 h15)
   have : 0<i.succ-l ↔ l<i.succ := by simp [Nat.sub_pos_iff_lt]
   have h1' : i.succ-l > 0 := by simp [this, h1]
   have : 0<l-1 ↔ 1<l := by simp [Nat.sub_pos_iff_lt]
   have h2' : l-1 > 0 := by simp [this, h2]
   Nat.sub_lt h2' h1'
-
 
 -- theorem t19 {l i : Nat} {h1 : i<2*l} {h2 : l≤i} {h3 : l≥1} : (l-1-(i.succ-l)).succ = l-1-(i-l) :=
 --   have h4 : i≥l := by assumption
@@ -147,7 +146,7 @@ theorem s2 {l i : Nat} {h1 : l<i.succ} {h2 : 1<l} : l-1-(i.succ-l)<l-1 := -- h1 
 --     _ = (0+l)-1-(i-l) := by simp_arith
 --     _ = (0+l)-1-(i+l-l-l) := by simp_arith
 --     _ = (0+l)-1-(i+l-(l+l)) := by simp_arith [Nat.sub_add_eq]
---     _ = (0+l)-1-(i+l-2*l) := by simp_arith [Nat.two_mul]
+    -- _ = (0+l)-1-(i+l-2*l) := by simp_arith [Nat.two_mul]
 --     _ = (0+l)-1-(i+l-2*l) := by simp_arith [Nat.sub_add_eq]
 --     _ = (0+l)-(i+l-2*l)-1 := by simp_arith [Nat.sub_right_comm]
 --     -- _ = (0+l)-1-(i-2*l+l) := by simp_arith [Nat.add_sub_comm]
