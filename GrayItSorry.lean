@@ -1,4 +1,4 @@
-import «Subsets».SubsetIsoFun
+import «Subsets».SubsetDef
 
 def Subset.grayVal {m : Nat} (times : Nat) : Subset m → Nat × Bool
   | nil => (0, false)
