@@ -1,4 +1,4 @@
-import «Subsets».SubsetIsoFun
+import «Subsets».IsoFun
 
 def Subset.binVal {l r : Nat} (xsl : Subset l) (xsr : Subset r) (opp : Fin 2) : Nat :=
   match xsl, xsr with
