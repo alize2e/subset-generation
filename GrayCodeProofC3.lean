@@ -18,7 +18,6 @@ theorem Subset.c3 (n' i : Nat)
         _ < (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true))).length - ((grayRecSlides n').map (cons false)).length := Nat.sub_lt_sub_right h1 h
         _ = ((grayRecSlides n').map (cons false)).length + ((grayRecSlides n').reverse.map (cons true)).length - ((grayRecSlides n').map (cons false)).length := by simp only [List.length_append, List.length_map, List.length_reverse, Nat.add_sub_cancel]
         _ = ((grayRecSlides n').reverse.map (cons true)).length := by simp only [List.length_map, List.length_reverse, Nat.add_sub_cancel]
-    -- have h8 : i.succ<(((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true))).length := by assumption
     have : (grayRecSlides n').reverse.length = ((grayRecSlides n').reverse.map (cons true)).length := by simp only [List.length_reverse, List.length_map]
     have : ((grayRecSlides n').map (cons false)).length = (grayRecSlides n').length := by simp only [List.length_map]
     have : i.succ-((grayRecSlides n').map (cons false)).length < (grayRecSlides n').reverse.length := by
