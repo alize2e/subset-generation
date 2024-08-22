@@ -71,7 +71,34 @@ theorem s1 {l i : Nat} (h : 0<l) : l-1-(i-l)<l := -- h is (s0 n'), so s1 (s0 n')
     _ ≤ l-1 := Nat.sub_le (l-1) (i-l)
     _ < l := Nat.pred_lt_self h
 
-theorem s2 {l i : Nat} {h1 : l<i.succ} {h2 : l > 1} : l-1-(i.succ-l)<l-1 := -- h1 is h4
+theorem s2' {l i : Nat} {h1 : i.succ<2*l} {h2 : i.succ>l} : 1<l :=
+  match l with
+  | Nat.zero =>
+    have : i.succ < 0 := by simp_arith [h1]
+    by contradiction
+  | Nat.succ l' =>
+    if h' : l' = 0 then
+      have : 1<i.succ :=
+        calc 1
+          _ ≤ l'.succ := by simp_arith
+          _ < i.succ := h2
+      have : 2≤i.succ := by simp_arith [this, Nat.succ_le_of_lt]
+      have : i.succ<2 :=
+        calc i.succ
+          _ < 2*l'.succ := h1
+          _ = 2 := by simp_arith [h']
+      have : 2<2 :=
+        calc 2
+          _ ≤ i.succ := by assumption
+          _ < 2 := by assumption
+      by contradiction
+    else
+      have : l'>0 := Nat.pos_of_ne_zero h'
+      calc 1
+        _ < 1+l' := Nat.lt_add_of_pos_right this
+        _ = l'.succ := by simp_arith
+
+theorem s2 {l i : Nat} {h1 : l<i.succ} {h2 : 1<l} : l-1-(i.succ-l)<l-1 := -- h1 is h15
   have : 0<i.succ-l ↔ l<i.succ := by simp [Nat.sub_pos_iff_lt]
   have h1' : i.succ-l > 0 := by simp [this, h1]
   have : 0<l-1 ↔ 1<l := by simp [Nat.sub_pos_iff_lt]
