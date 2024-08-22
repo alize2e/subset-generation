@@ -64,6 +64,6 @@ theorem Subset.grayRecSlides_one_change_next {n : Nat} {i : Nat} {h : i.succ<(gr
             _ = num_changes (grayRecSlides n').reverse[i-((grayRecSlides n').map (cons false)).length] (grayRecSlides n').reverse[i.succ-((grayRecSlides n').map (cons false)).length] := by rw [cons_same_num_changes]
             _ = num_changes (grayRecSlides n').reverse[i-(grayRecSlides n').length] (grayRecSlides n').reverse[i.succ-(grayRecSlides n').length] := by simp
             _ = num_changes (grayRecSlides n')[(grayRecSlides n').length-1-(i-(grayRecSlides n').length)] (grayRecSlides n')[(grayRecSlides n').length-1-(i.succ-(grayRecSlides n').length)] := by simp [List.sorry_getElem_reverse] -- FIX!!!!!
-            _ = num_changes (grayRecSlides n')[((grayRecSlides n').length-1-(i.succ-(grayRecSlides n').length)).succ] (grayRecSlides n')[(grayRecSlides n').length-1-(i.succ-(grayRecSlides n').length)] := sorry
+            _ = num_changes (grayRecSlides n')[((grayRecSlides n').length-1-(i.succ-(grayRecSlides n').length)).succ] (grayRecSlides n')[(grayRecSlides n').length-1-(i.succ-(grayRecSlides n').length)] := by simp [(s3 h16 h15)]
             _ = num_changes (grayRecSlides n')[(grayRecSlides n').length-1-(i.succ-(grayRecSlides n').length)] (grayRecSlides n')[((grayRecSlides n').length-1-(i.succ-(grayRecSlides n').length)).succ] := by rw [symm_num_changes]
             _ = 1 := by rw [ih]
