@@ -1,5 +1,10 @@
 # Formalization of subset generation with Lean 4.
 
+BinVal:
+- functions `binVal` and `binValOne` that treat `Subset n`s as numbers in binary (with the lsb on the left) and output those numbers in base ten
+- proofs about `binVal` and `binValOne`
+- proof `dec1` which could be helpful to prove termination of `genIt` in first case
+
 ConvertGrayPlainIt:
 - functions `φ` and `ψ` such that (although I have not proven this)
   - `(Subset.grayIt n).map Subset.φ = Subset.genIt n`
@@ -31,6 +36,9 @@ GrayRec, GrayRecComp, and GrayRecSlides
   - proof of some sort of symmetry of the helper function
 - GrayRecComp: proof that `genGray n = grayRecSlides n`
 
-IsoVecB and IsoFun
+IsoFun and IsoVecB
+- functions between `Subset n` and either `Fin n → Bool` or `VecB n` (`VecB :=Vect Bool`) whose compositions are the identity function, and therefore show that `Subset n` is isomorphic to `Fin n → Bool` and `VecB n`
+
+
 
 (Note: "the Knuth book" refers to _The Art of Computer Programming, Volume 4A, Combinatorial Algorithms, Part 1_ by Donald E. Knuth.)
