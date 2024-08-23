@@ -71,7 +71,7 @@ def Subset.xor_11 {n : Nat} : Subset n → Subset n
   | cons b nil => cons (!b) nil
   | cons b (cons b' bs) => cons (!b) (cons (!b') bs)
 
-theorem Subset.helpGRS_parity_xor11 {n : Nat} : ((grayRecSlides n).map (cons false)) ++ ((grayRecSlides n).map (cons false)).map xor_11 = grayRecSlides n.succ := by
+theorem Subset.grayRecSlides_xor11 {n : Nat} : ((grayRecSlides n).map (cons false)) ++ ((grayRecSlides n).map (cons false)).map xor_11 = grayRecSlides n.succ := by
   induction n with
   | zero => rfl
   | succ n' _ =>
