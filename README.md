@@ -14,7 +14,7 @@ ConvertGrayPlainIt and ConvertGrayPlainRec
 - ConvertGrayPlainRec
   - function `genRec'` that recursively generates `Subset n` in lexicographic order with lsb on right
   - functions `φ'` and `ψ'`, but have not yet proved that composition is identity
-- next steps: prove how `φ'` and `ψ'` relate the outputs of `grayRec` and `genRec'`, prove that compositions of `φ'` and `ψ'` is identity
+- next steps: prove how `φ'` and `ψ'` relate the outputs of `grayRec` and `genRec'`, prove that compositions of `φ'` and `ψ'` are identity functions
 
 EqTransport
 - part of an attempt to prove termination of `genIt`, but this attempt will likely fail because of casting, so unlikely to be useful
