@@ -1,4 +1,4 @@
-# Formalization of subset generation with Lean 4.
+# Formalization of subset generation algorithms with Lean 4.
 
 BinVal
 - functions `binVal` and `binValOne` that treat `Subset n`s as numbers in binary (with the lsb on the left) and output those numbers in base ten
