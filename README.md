@@ -5,12 +5,16 @@ BinVal
 - proofs about `binVal` and `binValOne`
 - proof `dec1` which could be helpful to prove termination of `genIt` in first case
 
-ConvertGrayPlainIt
-- functions `φ` and `ψ` such that (although I have not proven this)
-  - `(Subset.grayIt n).map Subset.φ = Subset.genIt n`
-  - `(Subset.genIt n).map Subset.ψ = Subset.grayIt n`
-- proofs that the compositions of these functions yield the identity
-- next steps: edit `grayRec` (or `grayRecSlides`) and `genRec` so that they actually correspond with these functions (lsb is not the same in each), and prove how `φ` and `ψ` relate the outputs of `grayRec` and `genRec`
+ConvertGrayPlainIt and ConvertGrayPlainRec
+- ConvertGrayPlainIt
+  - functions `φ` and `ψ` such that (although I have not proven this)
+    - `(Subset.grayIt n).map Subset.φ = Subset.genIt n`
+    - `(Subset.genIt n).map Subset.ψ = Subset.grayIt n`
+  - proofs that the compositions of these functions yield the identity
+- ConvertGrayPlainRec
+  - function `genRec'` that recursively generates `Subset n` in lexicographic order with lsb on right
+  - functions `φ'` and `ψ'`, but have not yet proved that composition is identity
+- next steps: prove how `φ'` and `ψ'` relate the outputs of `grayRec` and `genRec'`, prove that compositions of `φ'` and `ψ'` is identity
 
 EqTransport
 - part of an attempt to prove termination of `genIt`, but this attempt will likely fail because of casting, so unlikely to be useful
