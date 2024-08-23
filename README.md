@@ -42,6 +42,7 @@ IsoFun and IsoVecB
 PlainItSorry
 - iterative function `genIt` that generates subsets in lexicographic order, and is similar to "Algorithm M" on p. 282 of the Knuth book
 - includes a potential outline for a proof of termination of `genIt` that works in the first case but depends on `sorry`s in the second, and is unlikely to be doable because of the `cast` when adding to `soFar`
+- as far as I can tell, any method that does not rely on a `cast` would be much slower, so maybe I should revive the somewhat iterative in idea `subsetsItOG` or something along those lines, or pass a `curr : Subset n` as a parameter and edit it despite that being exceedingly slow
 
 PlainRecProofs
 - a proof that any `Subset n` is in the output of `genRec n`
@@ -60,5 +61,8 @@ UniqMem
 - definition of `UniqMem`
 - attempts at proofs involving `UniqMem` (namely in the goal of proving that each `Subset n` occurs in `genRec n` etc. exactly once)
 - probably unnecessary / a lot easier if I manage to update Lean and gain access to some of the newer theorems and definitions, especially `List.Nodup`
+- next step: see if I can use the contrapositive of `t6`, `LawfulBEq` for `Subset n`, or `Decidable` for `mem` – otherwise I'm kind of stuck
+
+General potential next steps: "Algorithm L" from Knuth book, 
 
 (Note: "the Knuth book" refers to _The Art of Computer Programming, Volume 4A, Combinatorial Algorithms, Part 1_ by Donald E. Knuth.)
