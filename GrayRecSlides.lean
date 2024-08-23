@@ -65,3 +65,19 @@ theorem Subset.grayRecSlides_num {n : Nat} : (grayRecSlides n).length = 2^n := b
       _ = 2*(grayRecSlides n').length := by simp_arith
       _ = 2*2^n' := by rw [ih]
       _ = 2^n'.succ := by rw [Nat.pow_succ']
+
+def Subset.xor_11 {n : Nat} : Subset n → Subset n
+  | nil => nil
+  | cons b nil => cons (!b) nil
+  | cons b (cons b' bs) => cons (!b) (cons (!b') bs)
+
+theorem Subset.helpGRS_parity_xor11 {n : Nat} : ((grayRecSlides n).map (cons false)) ++ ((grayRecSlides n).map (cons false)).map xor_11 = grayRecSlides n.succ := by
+  induction n with
+  | zero => rfl
+  | succ n' _ =>
+    calc ((grayRecSlides n'.succ).map (cons false)) ++ ((grayRecSlides n'.succ).map (cons false)).map xor_11
+      _ = ((helpGRS n'.succ false).map (cons false)) ++ ((((helpGRS n' false).map (cons false)) ++ ((helpGRS n' true).map (cons true))).map (cons false)).map xor_11 := by rfl
+      _ = ((helpGRS n'.succ false).map (cons false)) ++ ((((helpGRS n' false).map (xor_11 ∘ cons false ∘ cons false)) ++ ((helpGRS n' true).map (xor_11 ∘ cons false ∘ cons true)))) := by simp only [List.map_map, List.map_append]
+      _ = ((helpGRS n'.succ false).map (cons false)) ++ ((((helpGRS n' false).map (cons true ∘ cons true)) ++ ((helpGRS n' true).map (cons true ∘ cons false)))) := by rfl
+      _ = ((helpGRS n'.succ false).map (cons false)) ++ ((((helpGRS n' false).map (cons true)) ++ ((helpGRS n' true).map (cons false))).map (cons true)) := by simp only [List.map_map, List.map_append]
+      _ = grayRecSlides n'.succ.succ := by rfl
