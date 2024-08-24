@@ -69,3 +69,7 @@ example (n m : Nat) (s : Subset n) : s.card = m → n = m := by simp
 inductive SubsetXS (α : Type u) : List α → Type u where
  | nil : SubsetXS α []
  | cons : Bool → SubsetXS α xs → SubsetXS α (x::xs)
+
+def Subset.map (f : Bool → Bool) : Subset n → Subset n
+  | nil    => nil
+  | cons b bs => cons (f b) (map f bs)
