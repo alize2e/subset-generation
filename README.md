@@ -68,6 +68,6 @@ UniqMem
 - probably unnecessary / a lot easier if I manage to update Lean and gain access to some of the newer theorems and definitions, especially `List.Nodup`
 - next step: see if I can use the contrapositive of `t6`, `LawfulBEq` for `Subset n`, or `Decidable` for `mem` – otherwise I'm kind of stuck
 
-General potential next steps: "Algorithm L" from Knuth book, 
+General potential next step(s): "Algorithm L" from Knuth book
 
 (Note: "the Knuth book" refers to _The Art of Computer Programming, Volume 4A, Combinatorial Algorithms, Part 1_ by Donald E. Knuth.)
