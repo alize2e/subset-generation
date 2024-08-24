@@ -13,7 +13,10 @@ ConvertGrayPlainIt and ConvertGrayPlainRec
   - proofs that the compositions of these functions yield the identity
 - ConvertGrayPlainRec
   - function `genRec'` that recursively generates `Subset n` in lexicographic order with lsb on right
-  - functions `φ'` and `ψ'`, but have not yet proved that composition is identity
+  - functions `φ'` and `ψ'` such that
+    - `(genRec' n).map φ' = (grayRecSlides n)`
+    - `(grayRecSlides nl).map ψ' = (genRec' nl)`
+  - proof of the first equality
 - next steps: prove how `φ'` and `ψ'` relate the outputs of `grayRec` and `genRec'`, prove that compositions of `φ'` and `ψ'` are identity functions
 
 EqTransport
