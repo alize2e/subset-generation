@@ -29,7 +29,48 @@ def Subset.φ' {n : Nat} (s : Subset n) : Subset n := φ'' false s
 
 theorem Subset.ψ'_cons_false_comm {n : Nat} : ψ' ∘ (cons false : Subset n → Subset (n+1)) = (cons false) ∘ ψ' := by rfl
 
-theorem Subset.ψ'_cons_false_comm' {n : Nat} {s : Subset n} : ψ' (cons false s) = cons false (ψ' s) := by rfl
+theorem Subset.map_map (f g : Bool → Bool) (s : Subset n) : map g (map f s) = map (g ∘ f) s := by
+  induction s with
+  | nil => rfl
+  | cons b bs ih =>
+    calc map g (map f (cons b bs))
+      _ = cons ((g∘f) b) (map g (map f bs)) := by rfl
+      _ = cons ((g∘f) b) (map (g∘f) bs) := by rw [ih]
+
+theorem Subset.map_id (s : Subset n) : map (fun x => x) s = s := by
+  induction s with
+  | nil => rfl
+  | cons b bs ih => simp [map, ih]
+
+theorem Subset.ψ''_true {n : Nat} {s : Subset n} : ∀ b : Bool, ψ'' b s = (ψ' s).map (xor b) := by
+  induction s with
+  | nil =>
+    intro b
+    match b with
+    | false => rfl
+    | true => rfl
+  | cons x xs ih =>
+    intro b
+    calc ψ'' b (cons x xs)
+      _ = cons (xor b x) (ψ'' (xor b x) xs) := by rfl
+      _ = cons (xor b x) ((ψ' xs).map (xor (xor b x))) := by rw [ih]
+      _ = map (fun x => x) (cons (xor b x) ((ψ' xs).map (xor (xor b x)))) := by rw [map_id]
+      _ = map (fun x => xor x false) (cons (xor b x) ((ψ' xs).map (xor (xor b x)))) := by simp only [Bool.xor_false]
+      _ = map (fun x => xor false x) (cons (xor b x) ((ψ' xs).map (xor (xor b x)))) := by simp only [Bool.xor_comm]
+      _ = map (fun x => xor (xor b b) x) (cons (xor b x) ((ψ' xs).map (xor (xor b x)))) := by rw [Bool.xor_self]
+      _ = map (fun x => xor b (xor b x)) (cons (xor b x) ((ψ' xs).map (xor (xor b x)))) := by simp only [Bool.xor_assoc]
+      _ = map (xor b ∘ xor b) (cons (xor b x) ((ψ' xs).map (xor (xor b x)))) := by rfl
+      _ = map (xor b) (map (xor b) (cons (xor b x) ((ψ' xs).map (xor (xor b x))))) := by rw [map_map]
+      _ = map (xor b) (cons (xor b (xor b x)) ((((ψ' xs).map (xor (xor b x)))).map (xor b))) := by rfl
+      _ = map (xor b) (cons (xor b (xor b x)) ((ψ' xs).map ((xor b) ∘ (xor (xor b x))))) := by rw [map_map]
+      _ = map (xor b) (cons (xor b (xor b x)) ((ψ' xs).map (fun y => xor b (xor (xor b x) y)))) := by rfl
+      _ = map (xor b) (cons (xor (xor b b) x) ((ψ' xs).map (fun y => xor (xor b b) (xor x y)))) := by simp only [Bool.xor_assoc]
+      _ = map (xor b) (cons (xor false x) ((ψ' xs).map (fun y => xor false (xor x y)))) := by simp only [Bool.xor_self]
+      _ = map (xor b) (cons (xor false x) ((ψ' xs).map (fun y => xor (xor false x) y))) := by simp only [Bool.xor_assoc]
+      _ = map (xor b) (cons (xor false x) ((ψ' xs).map (xor (xor false x)))) := by rfl
+      _ = map (xor b) (cons (xor false x) (ψ''  (xor false x) xs)) := by rw [ih]
+      _ = map (xor b) (ψ'' false (cons x xs)) := by rfl
+      _ = map (xor b) (ψ' (cons x xs)) := by rfl
 
 theorem Subset.φ'_cons_false_comm {n : Nat} : φ' ∘ (cons false : Subset n → Subset (n+1)) = (cons false) ∘ φ' := by rfl
 
