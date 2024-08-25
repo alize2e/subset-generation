@@ -5,11 +5,7 @@ def Subset.genRec' (n : Nat) : List (Subset n) :=
   | 0 => [nil]
   | n'+1 => ((genRec' n').map (cons false)) ++ ((genRec' n').map (cons true))
 
-def Subset.start' {n : Nat} (g : Subset n) : Bool :=
-  match g with
-  | nil => false
-  | cons b _ => b
-
+-- conversion functions
 def Subset.ψ'' {n : Nat} (parity : Bool) : Subset n → Subset n
   | nil => nil
   | cons curr rest => cons (xor parity curr) (ψ'' (xor parity curr) rest)
@@ -22,13 +18,7 @@ def Subset.φ'' {n : Nat} (last : Bool) : Subset n → Subset n
 
 def Subset.φ' {n : Nat} (s : Subset n) : Subset n := φ'' false s
 
-#eval (Subset.genRec' 4).map Subset.φ' == (Subset.grayRecSlides 4)
-#eval (Subset.genRec' 3) == (Subset.grayRecSlides 3).map Subset.ψ'
-#eval (Subset.genRec' 3)
-#eval (Subset.genRec' 3)
-
-theorem Subset.ψ'_cons_false_comm {n : Nat} : ψ' ∘ (cons false : Subset n → Subset (n+1)) = (cons false) ∘ ψ' := by rfl
-
+-- Subset.map lemmas
 theorem Subset.map_map (f g : Bool → Bool) (s : Subset n) : map g (map f s) = map (g ∘ f) s := by
   induction s with
   | nil => rfl
@@ -42,6 +32,7 @@ theorem Subset.map_id (s : Subset n) : map (fun x => x) s = s := by
   | nil => rfl
   | cons b bs ih => simp [map, ih]
 
+-- cons lemmas
 theorem Subset.ψ''_b {n : Nat} {s : Subset n} : ∀ b : Bool, ψ'' b s = (ψ' s).map (xor b) := by
   induction s with
   | nil =>
@@ -83,20 +74,7 @@ theorem Subset.φ'_cons_true {n : Nat} : φ' ∘ (cons true : Subset n → Subse
 
 theorem Subset.φ'_cons_true'' {n : Nat} : φ' ∘ (cons true : Subset n → Subset (n+1)) = (xor_11 ∘ cons false) ∘ φ' := by funext; simp [φ'_cons_true']
 
-theorem Subset.φ'_p_eq_g {n : Nat} : (genRec' n).map φ' = (grayRecSlides n) := by
-  induction n with
-  | zero => rfl
-  | succ n' ih =>
-    calc (genRec' n'.succ).map φ'
-      _ = (((genRec' n').map (cons false)) ++ ((genRec' n').map (cons true))).map φ' := by rfl
-      _ = ((genRec' n').map (cons false)).map φ' ++ ((genRec' n').map (cons true)).map φ' := List.map_append φ' ((genRec' n').map (cons false)) ((genRec' n').map (cons true))
-      _ = (genRec' n').map (φ'∘(cons false)) ++ (genRec' n').map (φ'∘(cons true)) := by simp only [List.map_map]
-      _ = (genRec' n').map ((cons false) ∘ φ') ++ (genRec' n').map (φ'∘(cons true)) := by rw [φ'_cons_false_comm]
-      _ = (genRec' n').map ((cons false) ∘ φ') ++ (genRec' n').map (xor_11 ∘ cons false ∘ φ') := by rw [φ'_cons_true]
-      _ = ((genRec' n').map φ').map (cons false) ++ (((genRec' n').map φ').map (cons false)).map xor_11 := by simp only [List.map_map]
-      _ = (grayRecSlides n').map (cons false) ++ ((grayRecSlides n').map (cons false)).map xor_11 := by rw [ih]
-      _ = grayRecSlides n'.succ := by rw [grayRecSlides_xor11]
-
+-- composition is id lemmas
 theorem Subset.ψ''_b_φ''_b_id {n : Nat} {gray : Subset n} : ∀ b : Bool, (ψ'' b ∘ φ'' b) gray = gray := by
   induction gray with
   | nil => intro b; rfl
@@ -112,13 +90,48 @@ theorem Subset.ψ''_b_φ''_b_id {n : Nat} {gray : Subset n} : ∀ b : Bool, (ψ'
       _ = cons g (((ψ'' g) ∘ (φ'' g)) gs) := by rfl
       _ = cons g gs := by rw [ih]
 
--- do this sort of generalization for other theorems, esp. isomorphism stuff?
 theorem Subset.ψ'_φ'_id : ∀ n : Nat, ψ' ∘ φ' = fun (s : Subset n) => s := by
   intro n
   funext gray
   calc (ψ' ∘ φ') gray
     _ = (ψ'' false ∘ φ'' false) gray := by rfl
     _ = gray := ψ''_b_φ''_b_id false
+
+theorem Subset.φ''_b_ψ''_b_id {n : Nat} {plain : Subset n} : ∀ b : Bool, (φ'' b ∘ ψ'' b) plain = plain := by
+  induction plain with
+  | nil => intro b; rfl
+  | cons p ps ih =>
+    intro b
+    calc (φ'' b ∘ ψ'' b) (cons p ps)
+      _ = φ'' b (cons (xor b p) (ψ'' (xor b p) ps)) := by rfl
+      _ = cons (xor b (xor b p)) (φ'' (xor b p) (ψ'' (xor b p) ps)) := by rfl
+      _ = cons (xor (xor b b) p) (φ'' (xor b p) (ψ'' (xor b p) ps)) := by simp only [Bool.xor_assoc]
+      _ = cons (xor false p) (φ'' (xor b p) (ψ'' (xor b p) ps)) := by simp only [Bool.xor_self]
+      _ = cons p (φ'' (xor b p) (ψ'' (xor b p) ps)) := by simp only [Bool.false_xor]
+      _ = cons p (((φ'' (xor b p)) ∘ (ψ'' (xor b p))) ps) := by rfl
+      _ = cons p ps := by rw [ih]
+
+theorem Subset.φ'_ψ'_id : ∀ n : Nat, φ' ∘ ψ' = fun (s : Subset n) => s := by
+  intro n
+  funext plain
+  calc (φ' ∘ ψ') plain
+    _ = (φ'' false ∘ ψ'' false) plain := by rfl
+    _ = plain := φ''_b_ψ''_b_id false
+
+-- conversion theorems
+theorem Subset.φ'_p_eq_g {n : Nat} : (genRec' n).map φ' = (grayRecSlides n) := by
+  induction n with
+  | zero => rfl
+  | succ n' ih =>
+    calc (genRec' n'.succ).map φ'
+      _ = (((genRec' n').map (cons false)) ++ ((genRec' n').map (cons true))).map φ' := by rfl
+      _ = ((genRec' n').map (cons false)).map φ' ++ ((genRec' n').map (cons true)).map φ' := List.map_append φ' ((genRec' n').map (cons false)) ((genRec' n').map (cons true))
+      _ = (genRec' n').map (φ'∘(cons false)) ++ (genRec' n').map (φ'∘(cons true)) := by simp only [List.map_map]
+      _ = (genRec' n').map ((cons false) ∘ φ') ++ (genRec' n').map (φ'∘(cons true)) := by rw [φ'_cons_false_comm]
+      _ = (genRec' n').map ((cons false) ∘ φ') ++ (genRec' n').map (xor_11 ∘ cons false ∘ φ') := by rw [φ'_cons_true]
+      _ = ((genRec' n').map φ').map (cons false) ++ (((genRec' n').map φ').map (cons false)).map xor_11 := by simp only [List.map_map]
+      _ = (grayRecSlides n').map (cons false) ++ ((grayRecSlides n').map (cons false)).map xor_11 := by rw [ih]
+      _ = grayRecSlides n'.succ := by rw [grayRecSlides_xor11]
 
 theorem Subset.ψ'_g_eq_p {n : Nat} : (grayRecSlides n).map ψ' = (genRec' n) := by
   rw [←φ'_p_eq_g]
