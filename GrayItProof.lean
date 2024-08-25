@@ -4,10 +4,10 @@ def Subset.helpGrayIt {m : Nat} (parity : Bool) (soFar : List (Subset (m+1)))
   (soFar_len : soFar.length>0) (parity_def : parity = !(soFar[0].grayVal 1).snd) : List (Subset m.succ) :=
     match soFar with
     | a :: xs =>
-      match h : parity with
-      | true =>
-        match a with
-        | cons a₀ as =>
+      match a with
+      | Subset.cons a₀ as =>
+        match h : parity with
+        | true =>
           let a' := cons (!a₀) as
           have parity_def' : (grayVal 1 a').snd = true :=
             calc (grayVal 1 a').snd
@@ -22,19 +22,16 @@ def Subset.helpGrayIt {m : Nat} (parity : Bool) (soFar : List (Subset (m+1)))
               _ = !true := by rw [parity_def]
           have : (grayVal 1 (cons (!a₀) as)).fst+1 = (grayVal 1 (cons a₀ as)).fst := dec_case_1 a₀ as this
           have : (grayVal 1 (cons (!a₀) as)).fst+1 ≤ (grayVal 1 (cons a₀ as)).fst := by simp [this]
-          -- why does it want a and not (cons a₀ as)? how does a even exist?
-          have : (grayVal 1 (cons (!a₀) as)).fst+1 = (grayVal 1 a).fst := sorry
-          have : (grayVal 1 (cons (!a₀) as)).fst+1 ≤ (grayVal 1 a).fst := by simp [this]
           helpGrayIt (!parity) (a' :: soFar) (by simp [soFar_len]) (by simp [parity_def', h])
-      | false =>
-        let out := minLeft1? a
-        match h2 : out with
-        | none => soFar
-        | some next =>
-          have : (grayVal 1 next).fst+1 = (grayVal 1 a).fst := sorry
-          have : (grayVal 1 next).fst+1 ≤ (grayVal 1 a).fst := by simp [this]
-          have parity_def' : (grayVal 1 next).snd = false := sorry
-          helpGrayIt (!parity) (next :: soFar) (by simp [soFar_len]) (by simp [parity_def', h])
+        | false =>
+          let out := minLeft1? (cons a₀ as)
+          match h2 : out with
+          | none => soFar
+          | some next =>
+            have : (grayVal 1 next).fst+1 = (grayVal 1 (cons a₀ as)).fst := sorry
+            have : (grayVal 1 next).fst+1 ≤ (grayVal 1 (cons a₀ as)).fst := by simp [this]
+            have parity_def' : (grayVal 1 next).snd = false := sorry
+            helpGrayIt (!parity) (next :: soFar) (by simp [soFar_len]) (by simp [parity_def', h])
       termination_by (soFar[0].grayVal 1).fst
 
 def Subset.grayIt (n : Nat) : List (Subset n) :=
