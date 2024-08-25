@@ -18,7 +18,7 @@ ConvertGrayPlainIt and ConvertGrayPlainRec
     - `(grayRecSlides nl).map ψ' = (genRec' nl)`
   - proofs of the above equalities
   - proof that `ψ' ∘ φ' = (fun s => s)`
-- next steps: prove that compositions of `φ' ∘ ψ' = (fun s => s)`
+- next steps: prove that `φ' ∘ ψ' = (fun s => s)`
 
 EqTransport
 - part of an attempt to prove termination of `genIt`, but this attempt will likely fail because of casting, so unlikely to be useful
