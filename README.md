@@ -32,7 +32,6 @@ GrayItProof, GrayItSorry, and GrayItValProof
 - GrayItSorry and GrayItProof have an iterative algorithm, `grayIt`, for Gray code generation that is based on "Algorithm G" from p. 286 of the Knuth book. They also include an outline for a proof of termination that depends on `sorry`s – the outline in GrayItSorry is simpler, and that in GrayItProof has more proofs / is further along
 - GrayItValProof has some functions and lemmas used in GrayItProof
 - next steps:
-  - continue GrayItProof by trying to figure out why it wants a proof of `(grayVal 1 (cons (!a₀) as)).fst+1 ≤ (grayVal 1 a).fst` rather than of `(grayVal 1 (cons (!a₀) as)).fst+1 ≤ (grayVal 1 (cons (a₀) as)).fst`
   - figure out how to prove stuff about `minLeft1?` to use for a proof of `dec_case_2`
   - finish proving termination
 
