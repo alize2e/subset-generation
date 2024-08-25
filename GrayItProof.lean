@@ -1,4 +1,4 @@
-import «Subsets».working.GrayItValProof
+import «Subsets».GrayItValProof
 
 def Subset.helpGrayIt {m : Nat} (parity : Bool) (soFar : List (Subset (m+1)))
   (soFar_len : soFar.length>0) (parity_def : parity = !(soFar[0].grayVal 1).snd) : List (Subset m.succ) :=
