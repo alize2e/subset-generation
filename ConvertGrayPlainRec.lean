@@ -42,7 +42,7 @@ theorem Subset.map_id (s : Subset n) : map (fun x => x) s = s := by
   | nil => rfl
   | cons b bs ih => simp [map, ih]
 
-theorem Subset.ψ''_true {n : Nat} {s : Subset n} : ∀ b : Bool, ψ'' b s = (ψ' s).map (xor b) := by
+theorem Subset.ψ''_b {n : Nat} {s : Subset n} : ∀ b : Bool, ψ'' b s = (ψ' s).map (xor b) := by
   induction s with
   | nil =>
     intro b
@@ -97,50 +97,32 @@ theorem Subset.φ'_p_eq_g {n : Nat} : (genRec' n).map φ' = (grayRecSlides n) :=
       _ = (grayRecSlides n').map (cons false) ++ ((grayRecSlides n').map (cons false)).map xor_11 := by rw [ih]
       _ = grayRecSlides n'.succ := by rw [grayRecSlides_xor11]
 
-theorem Subset.ψ'_g_eq_p {n : Nat} : ∀ nl ≤ n, (grayRecSlides nl).map ψ' = (genRec' nl) := by
-  induction n with
-  | zero =>
-    intro nl
-    intro h0
-    have : ¬ 0<nl := by simp [h0]
-    match nl with
-    | Nat.zero => rfl
-    | Nat.succ nl' => contradiction
-  | succ n' ih =>
-    if h : n'=0 then
-      have : n'.succ = 1 := by simp only [h]
-      intro nl
-      intro h0
-      rw [this] at *
-      if h' : nl = 1 then
-        rw [h']
-        rfl
-      else
-        have : nl<1 := Nat.lt_of_le_of_ne h0 h'
-        rw [ih]
-        rw [h]
-        simp_arith only [Nat.le_of_lt_succ, this]
-    else
-      match n' with
-      | Nat.zero => contradiction
-      | Nat.succ n'' =>
-        intro nl
-        intro h0
-        if h' : nl = n''.succ.succ then
-          rw [h']
-          simp [←grayRecSlides_xor11]
-          simp [genRec']
-          have : List.map (ψ' ∘ cons false ∘ cons false) (grayRecSlides n'') = List.map ((ψ' ∘ cons false) ∘ cons false) (grayRecSlides n'') := by simp [ψ'_cons_false_comm']
-      --     calc List.map (ψ' ∘ cons false ∘ cons false) (grayRecSlides n'') ++
-      -- (List.map (ψ' ∘ cons false ∘ xor_11 ∘ cons false) (grayRecSlides n'') ++
-      --   (List.map (ψ' ∘ xor_11 ∘ cons false ∘ cons false) (grayRecSlides n'') ++
-      --     List.map (ψ' ∘ xor_11 ∘ cons false ∘ xor_11 ∘ cons false) (grayRecSlides n'')))
-          -- calc (grayRecSlides n''.succ.succ).map ψ'
-          --   _ = (((grayRecSlides n''.succ).map (cons false)) ++ ((grayRecSlides n''.succ).map (cons false)).map xor_11).map ψ' := by simp [←grayRecSlides_xor11]
-          --   _ = (((grayRecSlides n''.succ).map (cons false)) ++ ((grayRecSlides n''.succ).map (cons false)).map xor_11).map ψ' := by simp [←grayRecSlides_xor11]
-          --   _ = (grayRecSlides n''.succ).map (ψ' ∘ (cons false)) ++ ((grayRecSlides n''.succ).map (ψ' ∘ xor_11 ∘ cons false)) := by simp only [List.map_map, List.map_append]
-            -- _ = (((helpGRS n''.succ false).map (cons false)) ++ ((helpGRS n''.succ true).map (cons true))).map ψ' := by rfl
-        else
-          have : nl < n''.succ.succ := Nat.lt_of_le_of_ne h0 h'
-          rw [ih]
-          apply (Nat.le_of_lt_succ this)
+theorem Subset.ψ''_b_φ''_b_id {n : Nat} {gray : Subset n} : ∀ b : Bool, (ψ'' b ∘ φ'' b) gray = gray := by
+  induction gray with
+  | nil => intro b; rfl
+  | cons g gs ih =>
+    intro b
+    calc (ψ'' b ∘ φ'' b) (cons g gs)
+      _ = ψ'' b (φ'' b (cons g gs)) := by rfl
+      _ = ψ'' b (cons (xor b g) (φ'' g gs)) := by rfl
+      _ = cons (xor b (xor b g)) (ψ'' (xor b (xor b g)) (φ'' g gs)) := by rfl
+      _ = cons (xor (xor b b) g) (ψ'' (xor (xor b b) g) (φ'' g gs)) := by simp only [Bool.xor_assoc]
+      _ = cons (xor false g) (ψ'' (xor false g) (φ'' g gs)) := by simp only [Bool.xor_self]
+      _ = cons g (ψ'' g (φ'' g gs)) := by simp only [Bool.false_xor]
+      _ = cons g (((ψ'' g) ∘ (φ'' g)) gs) := by rfl
+      _ = cons g gs := by rw [ih]
+
+-- do this sort of generalization for other theorems, esp. isomorphism stuff?
+theorem Subset.ψ'_φ'_id : ∀ n : Nat, ψ' ∘ φ' = fun (s : Subset n) => s := by
+  intro n
+  funext gray
+  calc (ψ' ∘ φ') gray
+    _ = (ψ'' false ∘ φ'' false) gray := by rfl
+    _ = gray := ψ''_b_φ''_b_id false
+
+theorem Subset.ψ'_g_eq_p {n : Nat} : (grayRecSlides n).map ψ' = (genRec' n) := by
+  rw [←φ'_p_eq_g]
+  calc List.map ψ' (List.map φ' (genRec' n))
+    _ = List.map (ψ' ∘ φ') (genRec' n) := by rw [List.map_map]
+    _ = (genRec' n).map (fun s => s) := by rw [ψ'_φ'_id]
+    _ = (genRec' n) := List.map_id' (genRec' n)
