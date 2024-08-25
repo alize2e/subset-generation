@@ -8,8 +8,8 @@ BinVal
 ConvertGrayPlainIt and ConvertGrayPlainRec
 - ConvertGrayPlainIt
   - functions `φ` and `ψ` such that (although I have not proven this)
-    - `(Subset.grayIt n).map Subset.φ = Subset.genIt n`
-    - `(Subset.genIt n).map Subset.ψ = Subset.grayIt n`
+    - `(grayIt n).map φ = genIt n`
+    - `(genIt n).map ψ = grayIt n`
   - proofs that the compositions of these functions yield the identity
 - ConvertGrayPlainRec
   - function `genRec'` that recursively generates `Subset n` in lexicographic order with lsb on right
