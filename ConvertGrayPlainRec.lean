@@ -68,7 +68,7 @@ theorem Subset.φ'_cons_false_comm {n : Nat} : φ' ∘ (cons false : Subset n �
 theorem Subset.φ'_cons_true' {n : Nat} {p : Subset n} : φ' (cons true p) = xor_11 (cons false (φ' p)) :=
   match p with
   | nil => rfl
-  | cons b bs => by simp [φ', φ'', xor_11]
+  | cons _ _ => by simp [φ', φ'', xor_11]
 
 theorem Subset.φ'_cons_true {n : Nat} : φ' ∘ (cons true : Subset n → Subset (n+1)) = xor_11 ∘ cons false ∘ φ' := by funext; simp [φ'_cons_true']
 
