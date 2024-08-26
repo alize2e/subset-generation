@@ -2,59 +2,6 @@ import Subsets.GrayRecComp
 
 
 
--- copied from documentation (idk why not imported), for everything below
-theorem Nat.sub_one_add_one_eq_of_pos : ∀ {n}, 0 < n → (n - 1) + 1 = n
-  | _+1, _ => rfl
-
-theorem Nat.sub_lt_sub_right : ∀ {a b c : Nat}, c ≤ a → a < b → a - c < b - c
-  | 0, _, _, hle, h => by
-    rw [Nat.eq_zero_of_le_zero hle, Nat.sub_zero, Nat.sub_zero]
-    exact h
-  | _, _, 0, _, h => by
-    rw [Nat.sub_zero, Nat.sub_zero]
-    exact h
-  | _+1, _+1, _+1, hle, h => by
-    rw [Nat.add_sub_add_right, Nat.add_sub_add_right]
-    exact Nat.sub_lt_sub_right (le_of_succ_le_succ hle) (lt_of_succ_lt_succ h)
-
-theorem Nat.sub_one_sub_lt_of_lt (h : a < b) : b - 1 - a < b := by
-  rw [← Nat.sub_add_eq]
-  exact sub_lt (zero_lt_of_lt h) (Nat.lt_add_right a Nat.one_pos)
-
-theorem Nat.le_of_lt_add_one {n m : Nat} : n < m + 1 → n ≤ m := le_of_succ_le_succ
-
--- added axiom because theorem is in documentation but not imported
-theorem List.sorry_getElem_reverse {α : Type} {l : List α} {i} (h : i < l.reverse.length) :
-    l.reverse[i] = l[l.length - 1 - i]'(Nat.sub_one_sub_lt_of_lt (by simpa using h)) := sorry -- List.getElem_reverse
-
--- made my own proofs because not imported
-theorem List.diy_get_map (α β : Type) (f : α → β) (l : List α) (i : Nat) {h : i<l.length} : (l.map f)[i]'(by simp[h]) = f l[i] := by
-  induction i generalizing l with
-  | zero =>
-    match l with
-    | x::xs => rfl
-  | succ i' ih =>
-    have : i'.succ<(l.map f).length := by simp [h]
-    match l with
-    | x::xs =>
-      have : (xs.map f).length.succ = ((x::xs).map f).length := by rfl
-      have : (xs.map f).length = xs.length := by simp
-      calc ((x::xs).map f)[i'.succ]
-        _ = (xs.map f)[i'] := by simp
-        _ = f xs[i'] := by rw [ih]
-
-theorem List.diy_reverse_zero_last {α : Type} {l : List α} {h : 0<l.length} {h' : l.reverse.length-1<l.reverse.length} : l.reverse[l.reverse.length-1] = l[0] := by
-  match l with
-  | x::xs =>
-    have : (x::xs).reverse = xs.reverse++[x] := List.reverse_cons x xs
-    have : ¬ (xs.reverse++[x]).length-1 < xs.reverse.length := by simp
-    calc (x::xs).reverse[(x::xs).reverse.length-1]
-      _ = (xs.reverse++[x])[(xs.reverse++[x]).length-1] := by simp
-      _ = x := List.get_last this
-      _ = (x::xs)[0] := by simp
-
-
-
 -- num_changes and related lemmas
 def Subset.num_changes {n : Nat} : Subset n → Subset n → Nat
   | nil, nil => 0
@@ -212,7 +159,7 @@ theorem t17 (a b : Nat) (h1 : b<a) : a-(1+b)+1 = a-b := by
         _ = b'.succ-1 := by simp_arith
         _ < a-1 := Nat.pred_lt_pred this h1
     calc a-(1+b'.succ)+1
-      _ = a-(1+b'+1)+1 := by simp_arith
+      _ = a-(1+b'+1)+1 := by rfl
       _ = a-(1+b')-1+1 := by simp_arith [Nat.sub_add_eq]
       _ = a-1-(1+b')+1 := by simp_arith [Nat.sub_right_comm]
       _ = a-1-b' := by simp [ih, h1']
