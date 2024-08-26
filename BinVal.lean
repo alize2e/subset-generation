@@ -16,10 +16,10 @@ theorem Subset.binVal_append {l r : Nat} {sl : Subset l} {sr : Subset r} {opp : 
     induction sl with
     | nil =>
       induction sr with
-      | nil => rfl
+      | nil => simp only [binVal, binValOne]
       | cons r sr' ihr =>
         calc Subset.binVal Subset.nil (Subset.cons r sr') opp
-          _ = (if r then 1-opp else opp) + 2*(Subset.binVal Subset.nil sr' opp) := by rfl
+          _ = (if r then 1-opp else opp) + 2*(Subset.binVal Subset.nil sr' opp) := by simp only [binVal]
           _ = (if r then 1-opp else opp) + (2*(Subset.append Subset.nil sr').binValOne opp) := by rw [ihr]
     | cons l sl' ihl =>
       calc Subset.binVal (Subset.cons l sl') sr opp
