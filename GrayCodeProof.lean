@@ -8,13 +8,13 @@ theorem Subset.c1 (n' i : Nat)
   num_changes (grayRecSlides n'.succ)[i] (grayRecSlides n'.succ)[i.succ] = 1 :=
     have : ((grayRecSlides n').map (cons false)).length = (grayRecSlides n').length := List.length_map (grayRecSlides n') (cons false)
     have i_in_bounds : i<((grayRecSlides n').map (cons false)).length := Nat.lt_of_succ_lt succ_i_in_bounds
-    have i_in_left : (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i] = ((grayRecSlides n').map (cons false))[i] := List.get_append_left ((grayRecSlides n').map (cons false)) ((grayRecSlides n').reverse.map (cons true)) i_in_bounds
-    have succ_i_in_left : (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i.succ] = ((grayRecSlides n').map (cons false))[i.succ] := List.get_append_left ((grayRecSlides n').map (cons false)) ((grayRecSlides n').reverse.map (cons true)) succ_i_in_bounds
+    have i_in_left : (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i] = ((grayRecSlides n').map (cons false))[i] := List.getElem_append_left ((grayRecSlides n').map (cons false)) ((grayRecSlides n').reverse.map (cons true)) i_in_bounds
+    have succ_i_in_left : (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i.succ] = ((grayRecSlides n').map (cons false))[i.succ] := List.getElem_append_left ((grayRecSlides n').map (cons false)) ((grayRecSlides n').reverse.map (cons true)) succ_i_in_bounds
     calc num_changes (grayRecSlides n'.succ)[i] (grayRecSlides n'.succ)[i.succ]
       _ = num_changes (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i] (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i.succ] := by simp only [succ_i_in_bounds, grayRecSlides_IS n']
       _ = num_changes ((grayRecSlides n').map (cons false))[i] ((grayRecSlides n').map (cons false))[i.succ] := by simp only [i_in_left, succ_i_in_left]
-      _ = num_changes (cons false (grayRecSlides n')[i]) ((grayRecSlides n').map (cons false))[i.succ] := by rw [List.diy_get_map (Subset n') (Subset n'.succ) (cons false) (grayRecSlides n') i]
-      _ = num_changes (cons false (grayRecSlides n')[i]) (cons false (grayRecSlides n')[i.succ]) := by rw [List.diy_get_map (Subset n') (Subset n'.succ) (cons false) (grayRecSlides n') i.succ]
+      _ = num_changes (cons false (grayRecSlides n')[i]) ((grayRecSlides n').map (cons false))[i.succ] := by rw [List.getElem_map (cons false)]
+      _ = num_changes (cons false (grayRecSlides n')[i]) (cons false (grayRecSlides n')[i.succ]) := by rw [List.getElem_map (cons false)]
       _ = num_changes (grayRecSlides n')[i] (grayRecSlides n')[i.succ] := by rw [cons_same_num_changes]
       _ = 1 := by rw [ih]
 
@@ -28,27 +28,17 @@ theorem Subset.c2 (n' i : Nat)
     rw [succ_i_eq_map_len] at i_in_bounds
     have : ((grayRecSlides n').reverse.map (cons true)).length = ((grayRecSlides n').map (cons false)).length := by simp only [List.length_map, List.length_reverse]
     have : ((grayRecSlides n').reverse).length = ((grayRecSlides n').map (cons false)).length := by simp only [List.length_reverse, List.length_map]
-    have i_in_left : (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i] = ((grayRecSlides n').map (cons false))[i] := List.get_append_left ((grayRecSlides n').map (cons false)) ((grayRecSlides n').reverse.map (cons true)) i_in_bounds
-    have i_succ_in_right : (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[((grayRecSlides n').map (cons false)).length] = ((grayRecSlides n').reverse.map (cons true))[((grayRecSlides n').map (cons false)).length-((grayRecSlides n').map (cons false)).length] := List.get_append_right ((grayRecSlides n').map (cons false)) ((grayRecSlides n').reverse.map (cons true)) (by simp only [List.length_map, Nat.lt_irrefl, not_false_eq_true])
-    have rev_rev_len_pos : 0 < (grayRecSlides n').reverse.reverse.length := by
-      calc 0
-        _ < 2^n' := Nat.two_pow_pos n'
-        _ = (grayRecSlides n').length := by rw [grayRecSlides_num]
-        _ = (grayRecSlides n').reverse.reverse.length := by rw [List.reverse_reverse (grayRecSlides n')]
-    have : (grayRecSlides n').reverse.reverse.length - 1 < (grayRecSlides n').reverse.reverse.length :=
-      calc (grayRecSlides n').reverse.reverse.length - 1
-        _ < (grayRecSlides n').reverse.reverse.length - 1 + 1 := by simp only [List.reverse_reverse, Nat.lt_succ_self]
-        _ = (grayRecSlides n').reverse.reverse.length := by rw [Nat.sub_one_add_one_eq_of_pos rev_rev_len_pos]
+    have i_in_left : (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i] = ((grayRecSlides n').map (cons false))[i] := List.getElem_append_left ((grayRecSlides n').map (cons false)) ((grayRecSlides n').reverse.map (cons true)) i_in_bounds
+    have i_succ_in_right : (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[((grayRecSlides n').map (cons false)).length] = ((grayRecSlides n').reverse.map (cons true))[((grayRecSlides n').map (cons false)).length-((grayRecSlides n').map (cons false)).length] := List.getElem_append_right ((grayRecSlides n').map (cons false)) ((grayRecSlides n').reverse.map (cons true)) (by simp only [List.length_map, Nat.lt_irrefl, not_false_eq_true])
     calc num_changes (grayRecSlides n'.succ)[i] (grayRecSlides n'.succ)[i.succ]
       _ = num_changes (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i] (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i.succ] := by simp only [grayRecSlides_IS n', succ_i_eq_map_len, List.length_map]
       _ = num_changes ((grayRecSlides n').map (cons false))[i] (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i.succ] := by rw [i_in_left]
-      _ = num_changes (cons false (grayRecSlides n')[i]) (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i.succ] := by rw [List.diy_get_map (Subset n') (Subset n'.succ) (cons false) (grayRecSlides n') i]
+      _ = num_changes (cons false (grayRecSlides n')[i]) (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i.succ] := by rw [List.getElem_map (cons false)]
       _ = num_changes (cons false (grayRecSlides n')[i]) (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[((grayRecSlides n').map (cons false)).length] := by simp only [succ_i_eq_len, List.length_map]
       _ = num_changes (cons false (grayRecSlides n')[i]) ((grayRecSlides n').reverse.map (cons true))[((grayRecSlides n').map (cons false)).length-((grayRecSlides n').map (cons false)).length] := by rw [i_succ_in_right]
       _ = num_changes (cons false (grayRecSlides n')[i]) ((grayRecSlides n').reverse.map (cons true))[0] := by simp only [List.length_map, Nat.sub_self]
-      _ = num_changes (cons false (grayRecSlides n')[i]) (cons true (grayRecSlides n').reverse[0]) := by rw [List.diy_get_map (Subset n') (Subset n'.succ) (cons true) (grayRecSlides n').reverse 0]
-      _ = num_changes (cons false (grayRecSlides n')[i]) (cons true (grayRecSlides n').reverse.reverse[(grayRecSlides n').reverse.reverse.length-1]) := by rw [List.diy_reverse_zero_last]
-      _ = num_changes (cons false (grayRecSlides n')[i]) (cons true (grayRecSlides n')[(grayRecSlides n').length-1]) := by simp only [List.reverse_reverse]
+      _ = num_changes (cons false (grayRecSlides n')[i]) (cons true (grayRecSlides n').reverse[0]) := by rw [List.getElem_map (cons true)]
+      _ = num_changes (cons false (grayRecSlides n')[i]) (cons true (grayRecSlides n')[(grayRecSlides n').length-1]) := by simp only [List.copied_getElem_reverse, Nat.sub_zero]
       _ = num_changes (cons false (grayRecSlides n')[i]) (cons true (grayRecSlides n')[i.succ-1]) := by simp only [succ_i_eq_map_len, List.length_map]
       _ = num_changes (cons false (grayRecSlides n')[i]) (cons true (grayRecSlides n')[i]) := by simp only [Nat.succ_sub_succ_eq_sub, Nat.sub_zero]
       _ = 1 + num_changes (grayRecSlides n')[i] (grayRecSlides n')[i] := by rfl
@@ -79,8 +69,8 @@ theorem Subset.c3 (n' i : Nat)
       calc i.succ-((grayRecSlides n').map (cons false)).length
         _ < ((grayRecSlides n').reverse.map (cons true)).length := h11
         _ = (grayRecSlides n').reverse.length := by simp only [List.length_map, List.length_reverse]
-    have succ_i_in_right : (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i.succ] = ((grayRecSlides n').reverse.map (cons true))[i.succ-((grayRecSlides n').map (cons false)).length] := List.get_append_right ((grayRecSlides n').map (cons false)) ((grayRecSlides n').reverse.map (cons true)) h1'
-    have i_in_right : (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i] = ((grayRecSlides n').reverse.map (cons true))[i-((grayRecSlides n').map (cons false)).length] := List.get_append_right ((grayRecSlides n').map (cons false)) ((grayRecSlides n').reverse.map (cons true)) h10
+    have succ_i_in_right : (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i.succ] = ((grayRecSlides n').reverse.map (cons true))[i.succ-((grayRecSlides n').map (cons false)).length] := List.getElem_append_right ((grayRecSlides n').map (cons false)) ((grayRecSlides n').reverse.map (cons true)) h1'
+    have i_in_right : (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i] = ((grayRecSlides n').reverse.map (cons true))[i-((grayRecSlides n').map (cons false)).length] := List.getElem_append_right ((grayRecSlides n').map (cons false)) ((grayRecSlides n').reverse.map (cons true)) h10
     have : List.length (grayRecSlides n') - 1 - (i - List.length (grayRecSlides n')) < List.length (grayRecSlides n') := s1 (s0 n')
     have h15 : (grayRecSlides n').length < i.succ :=
       calc (grayRecSlides n').length
@@ -100,11 +90,11 @@ theorem Subset.c3 (n' i : Nat)
     calc num_changes (grayRecSlides n'.succ)[i] (grayRecSlides n'.succ)[i.succ]
       _ = num_changes (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i] (((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)))[i.succ] := by simp only [grayRecSlides_IS n']
       _ = num_changes ((grayRecSlides n').reverse.map (cons true))[i-((grayRecSlides n').map (cons false)).length] ((grayRecSlides n').reverse.map (cons true))[i.succ-((grayRecSlides n').map (cons false)).length] := by simp only [i_in_right, List.length_map, succ_i_in_right]
-      _ = num_changes (cons true (grayRecSlides n').reverse[i-((grayRecSlides n').map (cons false)).length]) ((grayRecSlides n').reverse.map (cons true))[i.succ-((grayRecSlides n').map (cons false)).length] := by rw [List.diy_get_map (Subset n') (Subset n'.succ) (cons true) (grayRecSlides n').reverse (i-((grayRecSlides n').map (cons false)).length)]
-      _ = num_changes (cons true (grayRecSlides n').reverse[i-((grayRecSlides n').map (cons false)).length]) (cons true (grayRecSlides n').reverse[i.succ-((grayRecSlides n').map (cons false)).length]) := by rw [List.diy_get_map (Subset n') (Subset n'.succ) (cons true) (grayRecSlides n').reverse (i.succ-((grayRecSlides n').map (cons false)).length)]
+      _ = num_changes (cons true (grayRecSlides n').reverse[i-((grayRecSlides n').map (cons false)).length]) ((grayRecSlides n').reverse.map (cons true))[i.succ-((grayRecSlides n').map (cons false)).length] := by rw [List.getElem_map  (cons true)]
+      _ = num_changes (cons true (grayRecSlides n').reverse[i-((grayRecSlides n').map (cons false)).length]) (cons true (grayRecSlides n').reverse[i.succ-((grayRecSlides n').map (cons false)).length]) := by rw [List.getElem_map (cons true)]
       _ = num_changes (grayRecSlides n').reverse[i-((grayRecSlides n').map (cons false)).length] (grayRecSlides n').reverse[i.succ-((grayRecSlides n').map (cons false)).length] := by rw [cons_same_num_changes]
       _ = num_changes (grayRecSlides n').reverse[i-(grayRecSlides n').length] (grayRecSlides n').reverse[i.succ-(grayRecSlides n').length] := by simp only [List.length_map]
-      _ = num_changes (grayRecSlides n')[(grayRecSlides n').length-1-(i-(grayRecSlides n').length)] (grayRecSlides n')[(grayRecSlides n').length-1-(i.succ-(grayRecSlides n').length)] := by simp only [List.sorry_getElem_reverse] -- FIX!!!!!
+      _ = num_changes (grayRecSlides n')[(grayRecSlides n').length-1-(i-(grayRecSlides n').length)] (grayRecSlides n')[(grayRecSlides n').length-1-(i.succ-(grayRecSlides n').length)] := by simp? [List.copied_getElem_reverse, Nat.succ_eq_add_one]
       _ = num_changes (grayRecSlides n')[((grayRecSlides n').length-1-(i.succ-(grayRecSlides n').length)).succ] (grayRecSlides n')[(grayRecSlides n').length-1-(i.succ-(grayRecSlides n').length)] := by simp only [(s3 h16 h15)]
       _ = num_changes (grayRecSlides n')[(grayRecSlides n').length-1-(i.succ-(grayRecSlides n').length)] (grayRecSlides n')[((grayRecSlides n').length-1-(i.succ-(grayRecSlides n').length)).succ] := by rw [symm_num_changes]
       _ = 1 := by rw [ih]
