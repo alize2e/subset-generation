@@ -74,7 +74,7 @@ theorem Subset.ψ_φ_id {n : Nat} {gray : Subset n} : (ψ∘φ) gray = gray := b
       _ = cons b ((ψ∘φ) g') := by rfl
       _ = cons b g' := by rw [ih]
 
-theorem Subset.φ_ψ_id {n : Nat} {gray : Subset n} : (φ∘ψ) plain = plain := by
+theorem Subset.φ_ψ_id {n : Nat} {plain : Subset n} : (φ∘ψ) plain = plain := by
   induction plain with
   | nil => rfl
   | cons b p' ih =>
@@ -87,3 +87,6 @@ theorem Subset.φ_ψ_id {n : Nat} {gray : Subset n} : (φ∘ψ) plain = plain :=
       _ = cons (xor b (xor p'.start' p'.start')) p' := by rw [Bool.xor_assoc]
       _ = cons (xor b false) p' := by rw [Bool.xor_self]
       _ = cons b p' := by rw [Bool.xor_false]
+
+-- `TODO`
+-- prove first paragraph of p 284 to prov below?
