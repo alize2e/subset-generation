@@ -1,5 +1,7 @@
 # Formalization of subset generation algorithms with Lean 4.
 
+Uses `leanprover/lean4:v4.10.0`, and all files are inside a folder called "Subsets" in a project.
+
 BinVal
 - functions `binVal` and `binValOne` that treat `Subset n`s as numbers in binary (with the lsb on the left) and output those numbers in base ten
 - proofs about `binVal` and `binValOne`
@@ -26,7 +28,6 @@ EqTransport
 
 GrayCodeProof and GrayCodeProofLemmas
 - proof that the number of changes between adjacent elements of the output of `grayRecSlides` is exactly 1, which is generalized to `genGray` too
-- last step: figure out how to update Lean so I can remove `sorry_getElem_reverse` and rest of lemmas that should be imported from GrayCodeProofLemmas
 
 GrayItProof, GrayItSorry, and GrayItValProof
 - GrayItSorry and GrayItProof have an iterative algorithm, `grayIt`, for Gray code generation that is based on "Algorithm G" from p. 286 of the Knuth book. They also include an outline for a proof of termination that depends on `sorry`s – the outline in GrayItSorry is simpler, and that in GrayItProof has more proofs / is further along
