@@ -42,12 +42,12 @@ theorem Subset.helpGRS_parity_reverse {n : Nat} : (helpGRS n false).reverse = he
     calc (helpGRS n'.succ false).reverse
       _ = (((helpGRS n' false).map (cons false)) ++ ((helpGRS n' true).map (cons true))).reverse := by rfl
       _ = ((helpGRS n' true).map (cons true)).reverse ++ ((helpGRS n' false).map (cons false)).reverse := by simp
-      _ = ((helpGRS n' true).reverse.map (cons true)) ++ ((helpGRS n' false).reverse.map (cons false)) := by simp [List.reverse_map]
+      _ = ((helpGRS n' true).reverse.map (cons true)) ++ ((helpGRS n' false).reverse.map (cons false)) := by simp [List.map_reverse]
       _ = ((helpGRS n' false).reverse.reverse.map (cons true)) ++ ((helpGRS n' true).map (cons false)) := by rw [ih]
       _ = ((helpGRS n' false).map (cons true)) ++ ((helpGRS n' true).map (cons false)) := by simp
       _ = helpGRS n'.succ true := by rfl
 
-theorem Subset.grayRecSlides_IS (n : Nat) : grayRecSlides n'.succ = ((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)) :=
+theorem Subset.grayRecSlides_IS (n' : Nat) : grayRecSlides n'.succ = ((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)) :=
   calc grayRecSlides n'.succ
     _ = helpGRS n'.succ false := by rfl
     _ = ((helpGRS n' false).map (cons false)) ++ ((helpGRS n' true).map (cons ¬false)) := by rfl
@@ -61,7 +61,7 @@ theorem Subset.gray_rec_eq (n : Nat) : grayRecSlides n = genGray n := by
     calc grayRecSlides n'.succ
       _ = ((grayRecSlides n').map (cons false)) ++ ((grayRecSlides n').reverse.map (cons true)) := by rw [grayRecSlides_IS n']
       _ = ((genGray n').map (cons false)) ++ ((genGray n').reverse.map (cons true)) := by rw [ih]
-      _ = ((genGray n').map (cons false)) ++ ((genGray n').map (cons true)).reverse := by simp [List.reverse_map]
+      _ = ((genGray n').map (cons false)) ++ ((genGray n').map (cons true)).reverse := by simp [List.map_reverse]
       _ = ((genGray n').map (cons false)) ++ ((genGray n').map (cons true)).reverseAux [] := by rfl
       _ = helpGG (genGray n') [] := by rw [helpGG_symmetry]
       _ = genGray n'.succ := by rfl
