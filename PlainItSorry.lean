@@ -41,12 +41,12 @@ def Subset.genIt (n : Nat) : List (Subset n) :=
   let init := initFalse n
   help Subset.nil init ([init]) (by simp_arith) rfl (by simp)
 
-#eval Subset.genIt 3
+#eval! Subset.genIt 3
 
 #eval 2^s.card
 #eval Subset.binVal s s 0
 #eval Subset.append s s
 #eval Subset.binVal s s 1
 
-#eval List.map (λ s : Subset 3 => Subset.binValOne s 1) (Subset.genIt 3)
+#eval! List.map (λ s : Subset 3 => Subset.binValOne s 1) (Subset.genIt 3)
 example {n : Nat} {s : Subset n} : 0<2^s.card := by simp_arith [Nat.two_pow_pos]
