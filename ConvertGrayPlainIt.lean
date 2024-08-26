@@ -57,8 +57,8 @@ def Subset.φ {n : Nat} : Subset n → Subset n
   | nil => nil
   | cons curr rest => cons (xor curr (φ rest).start') (φ rest)
 
-#eval (Subset.genIt 4).map Subset.ψ == Subset.grayIt 4
-#eval (Subset.grayIt 3).map Subset.φ == Subset.genIt 3
+#eval! (Subset.genIt 4).map Subset.ψ == Subset.grayIt 4
+#eval! (Subset.grayIt 3).map Subset.φ == Subset.genIt 3
 
 theorem Subset.ψ_φ_id {n : Nat} {gray : Subset n} : (ψ∘φ) gray = gray := by
   induction gray with
