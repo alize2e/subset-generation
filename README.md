@@ -17,7 +17,7 @@ ConvertGrayPlainIt and ConvertGrayPlainRec
   - function `genRec'` that recursively generates `Subset n` in lexicographic order with lsb on right
   - functions `φ'` and `ψ'` such that
     - `(genRec' n).map φ' = (grayRecSlides n)`
-    - `(grayRecSlides nl).map ψ' = (genRec' nl)`
+    - `(grayRecSlides n).map ψ' = (genRec' n)`
   - proofs of the above equalities, and of
     - `ψ' ∘ φ' = (fun s => s)`
     - `φ' ∘ ψ' = (fun s => s)`
