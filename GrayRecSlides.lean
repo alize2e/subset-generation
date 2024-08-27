@@ -80,24 +80,56 @@ theorem Subset.grayRecSlides_xor11 {n : Nat} : ((grayRecSlides n).map (cons fals
       _ = ((helpGRS n'.succ false).map (cons false)) ++ ((((helpGRS n' false).map (cons true)) ++ ((helpGRS n' true).map (cons false))).map (cons true)) := by simp only [List.map_map, List.map_append]
       _ = grayRecSlides n'.succ.succ := by rfl
 
+
+
+def Subset.start' {n : Nat} (g : Subset n) : Bool :=
+  match g with
+  | nil => false
+  | cons b _ => b
+
+-- unnecessary
+theorem Subset.in_cons_b_start' {n : Nat} {l : List (Subset n)} {a : Subset (n+1)} {b : Bool} (h : a ∈ l.map (cons b)) :
+  a.start' = b := by
+    simp at h
+    have : ∃ a_1, a_1 ∈ l ∧ cons b a_1 = a := by assumption
+    apply Exists.elim this
+      (fun a_1 => fun h' : a_1 ∈ l ∧ cons b a_1 = a =>
+      have : cons b a_1 = a := by simp [h']
+      calc a.start'
+        _ = (cons b a_1).start' := by rw [this]
+        _ = b := by rfl)
+
+-- unnecessary
 theorem Subset.append_map_cons_diff_rev_ne {n : Nat} {as bs : List (Subset n)} :
   ∀ a ∈ as.map (cons false), ∀ b ∈ (bs.map (cons true)).reverse, a ≠ b := by
     intro a ha
     intro b hb
+    have ha' : a.start' = false := in_cons_b_start' ha
+    rw [←List.map_reverse] at hb
+    have hb' : b.start' = true := in_cons_b_start' hb
     match a with
-    | cons true _ =>
-      contradiction
+    | cons false a' =>
+      match b with
+      | cons false b' => contradiction
+      | cons true b' => simp
+    | cons true _ => contradiction
 
 -- pairwise_reverse, pairwise_map
 theorem Subset.cons_diff_rev_nodup {n : Nat} {l : List (Subset n)} (h : l.Nodup) :
   ((l.map (cons false)) ++ (l.map (cons true)).reverse).Nodup := by
-    induction l with
-    | nil => simp only [List.map_nil, List.reverse_nil, List.append_nil, List.nodup_nil]
-    | cons x xs ih =>
-      simp_all [List.Nodup, List.pairwise_reverse, List.pairwise_append, List.pairwise_map]
+    simp only [List.Nodup] at *
+    simp only [List.pairwise_append]
+    simp
+    simp only [List.pairwise_reverse]
+    simp only [List.pairwise_map]
+    have {s s' : Subset n} {b : Bool} : cons b s ≠ cons b s' ↔ s ≠ s' := by simp
+    simp only [this]
+    simp only [ne_comm]
+    simp only [ne_eq, h, and_self]
 
 theorem Subset.grayRecSlides_nodup {n : Nat} : (grayRecSlides n).Nodup := by
   induction n with
   | zero => simp only [grayRecSlides, helpGRS, List.nodup_cons, List.not_mem_nil, not_false_eq_true, List.nodup_nil, and_self]
   | succ n' ih =>
     simp [grayRecSlides_IS]
+    exact cons_diff_rev_nodup ih
