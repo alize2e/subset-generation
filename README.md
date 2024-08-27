@@ -54,8 +54,9 @@ PlainItSorry
 - next steps: as far as I can tell, any method that does not rely on a `cast` would be much slower, so maybe I should revive the somewhat iterative in idea `subsetsItOG` or something along those lines, or pass a `curr : Subset n` as a parameter and edit it despite that being exceedingly slow
 
 PlainRecProofs
-- a proof that any `Subset n` is in the output of `genRec n`
-- a proof that the output of `genRec n` is of length 2^n
+- proof that any `Subset n` is in the output of `genRec n`
+- proof that the output of `genRec n` is of length 2^n
+- proof that there are no duplicates in the list output by `genRec n`
 
 SubsetDef
 - definition of `Subset n`
@@ -69,8 +70,7 @@ SubsetsOfLists
 UniqMem
 - definition of `UniqMem`
 - attempts at proofs involving `UniqMem` (namely in the goal of proving that each `Subset n` occurs in `genRec n` etc. exactly once)
-- probably unnecessary / a lot easier if I manage to update Lean and gain access to some of the newer theorems and definitions, especially `List.Nodup`
-- next step: see if I can use the contrapositive of `t6`, `LawfulBEq` for `Subset n`, or `Decidable` for `mem` – otherwise I'm kind of stuck
+- unnecessary now since I can use List.Nodup
 
 General potential next step(s): "Algorithm L" from Knuth book
 
