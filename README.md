@@ -1,6 +1,6 @@
 # Formalization of subset generation algorithms with Lean 4.
 
-Uses `leanprover/lean4:v4.10.0`, and all files are inside a folder called "Subsets" in a project.
+Uses `leanprover/lean4:v4.11.0-rc1`, and all files are inside a folder called "Subsets" in a project.
 
 BinVal
 - functions `binVal` and `binValOne` that treat `Subset n`s as numbers in binary (with the lsb on the left) and output those numbers in base ten
