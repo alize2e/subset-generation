@@ -1,3 +1,5 @@
+-- look at page 14!
+
 import «Subsets».SubsetDef
 
 def Subset.grayVal {m : Nat} : Subset m → Nat × Bool
@@ -35,11 +37,7 @@ theorem Subset.dec_case_1 {m : Nat} (a₀ : Bool) (as : Subset m) (h : (grayVal 
 def Subset.minLeft1? {n : Nat} : Subset n → Option (Subset n)
   | nil => none
   | cons true (cons b bs) => some (cons true (cons (!b) bs))
-  | cons b bs =>
-    let out := minLeft1? bs
-    match out with
-    | none => none
-    | some next => some (cons b next)
+  | cons b bs => minLeft1? bs >>= fun out => pure (cons b out)
 
 -- theorem Subset.dec_case_2 {m : Nat} {a₀ : Bool} {as : Subset m} {h : (grayVal 1 (cons a₀ as)).snd = false} :
   -- (grayVal next).fst+1 = (grayVal (cons a₀ as)).fst\
