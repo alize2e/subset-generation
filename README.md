@@ -42,7 +42,9 @@ GrayRec, GrayRecComp, and GrayRecSlides
   - a proof that any `Subset n` is in the output of `genGray n`/`grayRecSlides n`
   - a proof that the output of `genGray n`/`grayRecSlides n` is of length 2^n
   - a proof of some sort of symmetry of the helper function
-- GrayRecSlides also has a proof that `grayRecSlides` is equivalent to the generation method with xor 11000000... described on p. 284 of the Knuth book
+- GrayRecSlides also has
+  - a proof that `grayRecSlides` is equivalent to the generation method with xor 11000000... described on p. 284 of the Knuth book
+  - a proof that there are no duplicates in the output of `grayRecSlides`
 - GrayRecComp: proof that `genGray n = grayRecSlides n`
 
 IsoFun and IsoVecB
