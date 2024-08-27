@@ -51,63 +51,28 @@ theorem Subset.genRec_num {n : Nat} : (genRec n).length = 2^n :=
       _ = 2*(2^n') := by rw [ih]
       _ = 2^n'.succ := by rw [Nat.pow_succ']
 
--- def distinct {α : Type} [BEq α] : List α → Bool
---   | [] => true
---   | x::xs => distinct xs && !xs.contains x
+theorem Subset.ne_imp_helpGR_ne {n : Nat} {bs : Subset n} {l : List (Subset n)} (h : bs ∉ l) (b : Bool) :
+  (cons b bs) ∉ (helpGR l) := by
+    induction l with
+    | nil => nofun
+    | cons x xs ih =>
+      simp_all only [ne_eq, List.forall_mem_ne, List.mem_cons, not_or, helpGR, forall_eq_or_imp, cons.injEq, and_false, not_false_eq_true, and_self]
 
--- theorem Subset.t {n : Nat} {b : Bool} {x : Subset n} {l : List (Subset n)} {h : !l.contains x} :
---   !(helpGR l).contains (cons b x) := by
---     induction l with
---     | nil => rfl
---     | cons x xs ih =>
---       have : !(helpGR (x::xs)).contains (cons b x) = !((cons false x) :: (cons true x) :: helpGR xs).contains (cons b x) := by simp
---       rw [this]
+theorem Subset.nodup_eq_helpGR_nodup {n : Nat} {l : List (Subset n)} (h : l.Nodup) : (helpGR l).Nodup := by
+  induction l with
+  | nil => simp only [List.nodup_nil, helpGR]
+  | cons x xs ih =>
+    simp only [List.nodup_cons] at h
+    simp only [h] at ih
+    simp [helpGR]
+    have : x ∉ xs := by simp only [h, not_false_eq_true]
+    have h1 : ¬cons false x ∈ helpGR xs := ne_imp_helpGR_ne this false
+    have h2 : ¬cons true x ∈ helpGR xs := ne_imp_helpGR_ne this true
+    simp only [h1, not_false_eq_true, h2, ih, and_self]
 
--- theorem Subset.helpGR_distinct_IS {n : Nat} (l : List (Subset n)) (h : distinct l) : distinct (helpGR l) := by
---   induction l with
---   | nil => rfl
---   | cons x xs ih =>
---     calc distinct (helpGR (x::xs))
---       _ = distinct ((cons false x) :: (cons true x) :: helpGR xs) := by rfl
---       _ = distinct ((cons true x) :: helpGR xs) && !((cons true x) :: helpGR xs).contains (cons false x) := by rfl
-
--- theorem Subset.genRec_distinct {n : Nat} : distinct (genRec n) := by
---   induction n with
---   | zero => rfl
---   | succ n' ih =>
---     calc distinct (genRec n'.succ)
---       _ = distinct (helpGR (genRec n')) := by rfl
-
--- theorem Subset.genRec_no_dup {n : Nat} : Nodup (genRec n) := by
---   induction n with
---   | zero =>
---     calc Nodup (genRec 0)
---       _ = Nodup [Subset.nil] := by rfl
---       -- _ = Nodup [] := by simp [pairwise_cons]
---       -- _ = true := by simp [Pairwise.nil]
---   | succ n' ih =>
-
-
---Nodup, Pairwise?
--- theorem nodup_cons {a : α} {l : List α} : Nodup (a :: l) ↔ a ∉ l ∧ Nodup l := by
--- theorem pairwise_map {l : List α} :
-    -- (l.map f).Pairwise R ↔ l.Pairwise fun a b => R (f a) (f b) := by
-
--- List.any_cons
-
--- theorem any_eq {l : List α} : l.any p = decide (∃ x, x ∈ l ∧ p x) := by induction l <;> simp [*]
-
--- @[simp] theorem any_eq_true {l : List α} : l.any p ↔ ∃ x, x ∈ l ∧ p x := by simp [any_eq]
-
--- theorem contains_eq_any_beq [BEq α] (l : List α) (a : α) : l.contains a = l.any (a == ·) := by
---   induction l with simp | cons b l => cases b == a <;> simp [*]
-
--- example {n : Nat} {b : Bool} {bs : Subset n} {l : List (Subset n)} : (helpGR l).contains (cons b bs) → l.contains bs :=
---   calc (helpGR l).contains (cons b bs)
---     _ = decide (∃ x, x ∈ l ∧ (cons b bs) == (cons b x)) := by simp [List.contains_eq_any_beq, ]
-
--- example {n : Nat} {b : Bool} {bs : Subset n} {l : List (Subset n)} : l.contains bs → (helpGR l).contains (cons b bs) := by
---   intro h
---   -- have : l.any (bs == ⬝ ) := by simp[List.contains_eq_any_beq]
---   have : ∃ x, x ∈ l ∧ bs == x := by simp [List.contains_eq_any_beq, List.any_eq_true]
---   induction l with simp [List.beq] | cons b l => cases b == a <;> simp [*]
+theorem Subset.genRec_nodup {n : Nat} : (genRec n).Nodup := by
+  induction n with
+  | zero => simp only [genRec, List.nodup_cons, List.not_mem_nil, not_false_eq_true, List.nodup_nil, and_self]
+  | succ n' ih =>
+    simp only [genRec]
+    exact nodup_eq_helpGR_nodup ih
