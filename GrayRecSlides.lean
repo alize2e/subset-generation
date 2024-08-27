@@ -7,8 +7,6 @@ def Subset.helpGRS (n : Nat) (parity : Bool) : List (Subset n) :=
 
 def Subset.grayRecSlides (n : Nat) : List (Subset n) := helpGRS n false
 
--- `TODO` uniqueness of elements easier to prove here?
-
 #eval Subset.grayRecSlides 3
 
 theorem Subset.in_helpGRS {n : Nat} {s : Subset n} : ∀ parity : Bool, s ∈ helpGRS n parity := by
@@ -81,3 +79,25 @@ theorem Subset.grayRecSlides_xor11 {n : Nat} : ((grayRecSlides n).map (cons fals
       _ = ((helpGRS n'.succ false).map (cons false)) ++ ((((helpGRS n' false).map (cons true ∘ cons true)) ++ ((helpGRS n' true).map (cons true ∘ cons false)))) := by rfl
       _ = ((helpGRS n'.succ false).map (cons false)) ++ ((((helpGRS n' false).map (cons true)) ++ ((helpGRS n' true).map (cons false))).map (cons true)) := by simp only [List.map_map, List.map_append]
       _ = grayRecSlides n'.succ.succ := by rfl
+
+theorem Subset.append_map_cons_diff_rev_ne {n : Nat} {as bs : List (Subset n)} :
+  ∀ a ∈ as.map (cons false), ∀ b ∈ (bs.map (cons true)).reverse, a ≠ b := by
+    intro a ha
+    intro b hb
+    match a with
+    | cons true _ =>
+      contradiction
+
+-- pairwise_reverse, pairwise_map
+theorem Subset.cons_diff_rev_nodup {n : Nat} {l : List (Subset n)} (h : l.Nodup) :
+  ((l.map (cons false)) ++ (l.map (cons true)).reverse).Nodup := by
+    induction l with
+    | nil => simp only [List.map_nil, List.reverse_nil, List.append_nil, List.nodup_nil]
+    | cons x xs ih =>
+      simp_all [List.Nodup, List.pairwise_reverse, List.pairwise_append, List.pairwise_map]
+
+theorem Subset.grayRecSlides_nodup {n : Nat} : (grayRecSlides n).Nodup := by
+  induction n with
+  | zero => simp only [grayRecSlides, helpGRS, List.nodup_cons, List.not_mem_nil, not_false_eq_true, List.nodup_nil, and_self]
+  | succ n' ih =>
+    simp [grayRecSlides_IS]
