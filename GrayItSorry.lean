@@ -34,5 +34,5 @@ def Subset.grayIt (n : Nat) : List (Subset n) :=
     let init := initFalse m.succ
     helpGrayIt true [init] (by simp)
 
-#eval Subset.grayIt 3
-#eval List.map (Subset.grayVal) (Subset.grayIt 3)
+#eval! Subset.grayIt 3
+#eval! List.map (Subset.grayVal) (Subset.grayIt 3)
