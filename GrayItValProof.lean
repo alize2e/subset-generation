@@ -84,3 +84,35 @@ theorem Subset.ml1?_gV_ne_gV {n : Nat} (s : Subset n) : s.ml1?XorGv := by
   match s.findMinLeft1? with
   | none => rfl
   | some out => simp only [gV_ne_change1_gV, Bool.not_bne_self]
+
+#eval (Subset.genRec 3)
+#eval (Subset.genRec 3).map Subset.minLeft1?
+
+theorem Subset.ml1?_cons_idk {n : Nat} {b : Bool} {bs : Subset n} {h : (cons true (cons b bs)).grayVal.snd} :
+  ((cons true (cons b bs)).change1 1 (by simp only [Nat.lt_add_left_iff_pos, Nat.zero_lt_succ])).grayVal.fst+1 = (cons true (cons b bs)).grayVal.fst := by
+    have h1 : bs.grayVal.snd = b :=
+      calc bs.grayVal.snd
+        _ = xor false bs.grayVal.snd := by rw [Bool.false_xor bs.grayVal.snd]
+        _ = xor (xor b b) bs.grayVal.snd := by rw [Bool.xor_self]
+        _ = xor b (xor b bs.grayVal.snd) := by rw [Bool.xor_assoc]
+        _ = xor (xor b bs.grayVal.snd) b := by rw [Bool.xor_comm]
+        _ = xor (cons b bs).grayVal.snd b := by rfl
+        _ = xor false (xor (cons b bs).grayVal.snd b) := by rw [Bool.false_xor (xor (cons b bs).grayVal.snd b)]
+        _ = xor (xor true true) (xor (cons b bs).grayVal.snd b) := by rw [Bool.xor_self]
+        _ = xor true (xor true (xor (cons b bs).grayVal.snd b)) := by rw [Bool.xor_assoc]
+        _ = xor true (xor (xor true (cons b bs).grayVal.snd) b) := by rw [Bool.xor_assoc]
+        _ = xor true (xor ((cons true (cons b bs)).grayVal.snd) b) := by rfl
+        _ = xor true (xor true b) := by rw [h]
+        _ = xor (xor true true) b := by rw [Bool.xor_assoc]
+        _ = xor false b := by rw [Bool.xor_self]
+        _ = b := Bool.false_xor b
+    have : (cons true (cons b bs)).change1 1 (by simp only [Nat.lt_add_left_iff_pos, Nat.zero_lt_succ]) = cons true (cons (!b) bs) := by rfl
+    rw [this]
+    simp [grayVal]
+    calc (2 * (2 * bs.grayVal.fst + if b = bs.grayVal.snd then 0 else 1) + if (!b) = bs.grayVal.snd then 0 else 1) + 1
+      _ = (2 * (2 * bs.grayVal.fst + if true then 0 else 1) + if false then 0 else 1) + 1 := by simp only [h1, ↓reduceIte, Nat.add_zero, Bool.not_eq_self, Bool.false_eq_true]
+      _ = (2 * (2 * bs.grayVal.fst) + 1) + 1 := by simp only [↓reduceIte, Nat.add_zero, Bool.false_eq_true]
+      _ = 2 * (2 * bs.grayVal.fst) + 2 := by simp_arith
+      _ = 2 * (2 * bs.grayVal.fst + 1) := by simp_arith
+      _ = 2 * (2 * bs.grayVal.fst + if true then 1 else 0) + if true then 0 else 1 := by simp
+      _ = 2 * (2 * bs.grayVal.fst + if b = bs.grayVal.snd then 1 else 0) + if b = bs.grayVal.snd then 0 else 1 := by simp only [↓reduceIte, Nat.add_zero, h1]
