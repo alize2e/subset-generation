@@ -34,46 +34,7 @@ theorem Subset.dec_case_1 {m : Nat} (a₀ : Bool) (as : Subset m) (h : (grayVal 
       else
         by simp [grayVal, h', Bool.xor_false]
 
-def Subset.minLeft1? {n : Nat} : Subset n → Option (Subset n)
-  | nil => none
-  | cons true (cons b bs) => some (cons true (cons (!b) bs))
-  | cons b bs =>
-    let out := minLeft1? bs
-    match out with
-    | none => none
-    | some next => some (cons b next)
-
-def Subset.ml1?XorGv {n : Nat} (s : Subset n) : Bool :=
-  match s.minLeft1? with
-  | none => true
-  | some out => xor (grayVal out).snd (grayVal s).snd
-
--- theorem Subset.ml1?_gV_ne_gV {n : Nat} {s : Subset n} : s.ml1?XorGv := by
---   simp [ml1?XorGv]
---   match s.minLeft1? with
---   | none => rfl
---   | some out =>
---     calc xor out.grayVal.snd s.grayVal.snd
-  -- simp [minLeft1?]
-  -- match s.findMinLeft1? with
-  -- | none => rfl
-  -- | some out => simp only [gV_ne_change1_gV, Bool.not_bne_self]
-
--- theorem Subset.dec_case_2 {m : Nat} {a₀ : Bool} {as : Subset m} {h : (grayVal 1 (cons a₀ as)).snd = false} :
-  -- (grayVal next).fst+1 = (grayVal (cons a₀ as)).fst\
-
--- def Subset.split {n : Nat} (s : Subset n) (m : Fin n) : Prod Bool (Prod (Subset (m-1)) (Subset (n-m))) :=
-
 def Subset.change1 {n : Nat} (s : Subset n) (m : Nat) (h : m<n) : Subset n :=
-  match m with
-  | Nat.zero =>
-    match s with
-    | cons b bs => cons (!b) bs
-  | Nat.succ m' =>
-    match s with
-    | cons b bs => cons b (change1 bs m' (Nat.lt_of_succ_lt_succ h))
-
-def Subset.change1'' {n : Nat} (m : Nat) (h : m<n) (s : Subset n) : Subset n :=
   match m with
   | Nat.zero =>
     match s with
@@ -107,31 +68,19 @@ theorem Subset.gV_ne_change1_gV {n : Nat} {s : Subset n} {m : Nat} {h : m<n} : (
         _ = b.xor !bs.grayVal.snd := by rw [ih]
         _ = !(b.xor bs.grayVal.snd) := Bool.xor_not b bs.grayVal.snd
 
--- doesn't terminate??? compilation problem with grayitproof
-def Subset.minLeft1?' {n : Nat} (s : Subset n) : Option (Subset n) :=
+def Subset.minLeft1? {n : Nat} (s : Subset n) : Option (Subset n) :=
   match s.findMinLeft1? with
   | none => none
   | some out => s.change1 out (Fin.is_lt out)
 
-#eval (Subset.genRec 3)
-#eval (Subset.genRec 3).map (Subset.change1'' 2 (by simp))
-#eval (Subset.genRec 3).map Subset.minLeft1?' == (Subset.genRec 3).map Subset.minLeft1?
-
-def Subset.ml1?XorGv' {n : Nat} (s : Subset n) : Bool :=
-  match s.minLeft1?' with
+def Subset.ml1?XorGv {n : Nat} (s : Subset n) : Bool :=
+  match s.minLeft1? with
   | none => true
   | some out => xor (grayVal out).snd (grayVal s).snd
 
-theorem Subset.ml1?_gV_ne_gV' {n : Nat} {s : Subset n} : s.ml1?XorGv' := by
-  simp [ml1?XorGv']
-  simp [minLeft1?']
+theorem Subset.ml1?_gV_ne_gV {n : Nat} (s : Subset n) : s.ml1?XorGv := by
+  simp [ml1?XorGv]
+  simp [minLeft1?]
   match s.findMinLeft1? with
   | none => rfl
   | some out => simp only [gV_ne_change1_gV, Bool.not_bne_self]
-
-#eval (Subset.genRec 3)
-#eval (Subset.genRec 3).map Subset.minLeft1?
-
-def s := Subset.cons false (Subset.cons true (Subset.cons true Subset.nil))
-#eval s
-#eval Subset.minLeft1? s
