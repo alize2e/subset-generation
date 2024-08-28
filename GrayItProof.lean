@@ -23,13 +23,15 @@ def Subset.helpGrayIt {m : Nat} (parity : Bool) (soFar : List (Subset (m+1)))
           have : (grayVal (cons (!a₀) as)).fst+1 ≤ (grayVal (cons a₀ as)).fst := by simp only [this, Nat.le_refl]
           helpGrayIt (!parity) (a' :: soFar) (by simp only [List.length_cons, gt_iff_lt, Nat.zero_lt_succ]) (by simp only [h, Bool.not_true, List.getElem_cons_zero, parity_def'])
         | false =>
-          let out := minLeft1? (cons a₀ as)
-          match h2 : out with
+          match h2 : minLeft1? (cons a₀ as) with
           | none => soFar
           | some next =>
+            have parity_def' : (grayVal next).snd = false :=
+              have : (cons a₀ as).ml1?XorGv := ml1?_gV_ne_gV (cons a₀ as)
+              have : (cons a₀ as).ml1?XorGv = xor (grayVal next).snd (grayVal (cons a₀ as)).snd := by simp [ml1?XorGv, h2]
+              by simp_all only [List.getElem_cons_zero, Bool.false_eq, Bool.not_eq_false', Nat.le_refl, Bool.bne_true, Bool.not_eq_true', Bool.not_false]
             have : (grayVal next).fst+1 = (grayVal (cons a₀ as)).fst := sorry
             have : (grayVal next).fst+1 ≤ (grayVal (cons a₀ as)).fst := by simp only [this, Nat.le_refl]
-            have parity_def' : (grayVal next).snd = false := sorry
             helpGrayIt (!parity) (next :: soFar) (by simp only [List.length_cons, gt_iff_lt, Nat.zero_lt_succ]) (by simp only [h, Bool.not_false, List.getElem_cons_zero, parity_def'])
       termination_by (soFar[0].grayVal).fst
 
