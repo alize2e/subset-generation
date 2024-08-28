@@ -88,7 +88,7 @@ theorem Subset.ml1?_gV_ne_gV {n : Nat} (s : Subset n) : s.ml1?XorGv := by
 #eval (Subset.genRec 3)
 #eval (Subset.genRec 3).map Subset.minLeft1?
 
-theorem Subset.ml1?_cons_idk {n : Nat} {b : Bool} {bs : Subset n} {h : (cons true (cons b bs)).grayVal.snd} :
+theorem Subset.ml1?_cons_idk {n : Nat} {b : Bool} {bs : Subset n} (h : (cons true (cons b bs)).grayVal.snd) :
   ((cons true (cons b bs)).change1 1 (by simp only [Nat.lt_add_left_iff_pos, Nat.zero_lt_succ])).grayVal.fst+1 = (cons true (cons b bs)).grayVal.fst := by
     have h1 : bs.grayVal.snd = b :=
       calc bs.grayVal.snd
@@ -116,3 +116,47 @@ theorem Subset.ml1?_cons_idk {n : Nat} {b : Bool} {bs : Subset n} {h : (cons tru
       _ = 2 * (2 * bs.grayVal.fst + 1) := by simp_arith
       _ = 2 * (2 * bs.grayVal.fst + if true then 1 else 0) + if true then 0 else 1 := by simp
       _ = 2 * (2 * bs.grayVal.fst + if b = bs.grayVal.snd then 1 else 0) + if b = bs.grayVal.snd then 0 else 1 := by simp only [↓reduceIte, Nat.add_zero, h1]
+
+theorem Subset.ml1?_gV_fst {n : Nat} {s : Subset n} {h : s.grayVal.snd} {h2 : s.findMinLeft1?.isSome} : (s.change1 (s.findMinLeft1?.get h2) (by simp)).grayVal.fst+1 = s.grayVal.fst := by
+  induction n with
+  | zero =>
+    match s with
+    | nil => nofun
+  | succ n' ih =>
+    match n' with
+    | Nat.zero =>
+      match s with
+      | cons true nil => nofun
+      | cons false nil => nofun
+    | Nat.succ n'' =>
+      match s with
+      | cons true (cons _ _) => apply ml1?_cons_idk h
+      | cons false (cons b bs) =>
+        have h' : (cons b bs).grayVal.snd :=
+          calc (cons b bs).grayVal.snd
+            _ = xor false (cons b bs).grayVal.snd := by rw [Bool.false_xor (cons b bs).grayVal.snd]
+            _ = (cons false (cons b bs)).grayVal.snd := by rfl
+            _ = true := h
+        match h2' : (cons b bs).findMinLeft1?.isSome with
+        | true => skip
+        | false =>
+          have : (cons false (cons b bs)).findMinLeft1?.isSome = false := by
+            simp [findMinLeft1?]
+            match h3 : (cons b bs).findMinLeft1? with
+            | none => rfl
+            | some out =>
+              have ht : (cons b bs).findMinLeft1?.isSome = true := by simp [h3]
+              have hf : (cons b bs).findMinLeft1?.isSome = false := h2'
+              have : true = false :=
+                calc true
+                  _ = (cons b bs).findMinLeft1?.isSome := by rw [ht]
+                  _ = false := hf
+              contradiction
+          have : true = false :=
+            calc true
+              _ = (cons false (cons b bs)).findMinLeft1?.isSome := by rw [h2]
+              _ = false := by rw [this]
+          contradiction
+  -- induction (s.findMinLeft1?.get h2).toNat with
+  -- | zero => nofun
+  -- | succ n' ih => skip
