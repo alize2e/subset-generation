@@ -117,7 +117,26 @@ theorem Subset.ml1?_cons_idk {n : Nat} {b : Bool} {bs : Subset n} (h : (cons tru
       _ = 2 * (2 * bs.grayVal.fst + if true then 1 else 0) + if true then 0 else 1 := by simp
       _ = 2 * (2 * bs.grayVal.fst + if b = bs.grayVal.snd then 1 else 0) + if b = bs.grayVal.snd then 0 else 1 := by simp only [↓reduceIte, Nat.add_zero, h1]
 
-theorem Subset.ml1?_gV_fst {n : Nat} {s : Subset n} {h : s.grayVal.snd} {h2 : s.findMinLeft1?.isSome} : (s.change1 (s.findMinLeft1?.get h2) (by simp)).grayVal.fst+1 = s.grayVal.fst := by
+theorem Subset.change1_cons_false_IS {n : Nat} {b : Bool} {bs : Subset n}
+  (h2 : (cons false (cons b bs)).findMinLeft1?.isSome) (h2' : (cons b bs).findMinLeft1?.isSome) :
+  (cons false (cons b bs)).change1 ((cons false (cons b bs)).findMinLeft1?.get h2) (by simp) = cons false ((cons b bs).change1 ((cons b bs).findMinLeft1?.get h2') (by simp)) := by
+    have : ∃ out, (cons b bs).findMinLeft1? = some out := by
+      match h3 : (cons b bs).findMinLeft1? with
+      | none =>
+        have : (cons b bs).findMinLeft1?.isSome = false := by simp [h3]
+        have : true = false :=
+          calc true
+            _ = (cons b bs).findMinLeft1?.isSome := by rw [h2']
+            _ = false := this
+        contradiction
+      | some out => simp [h3]
+    apply Exists.elim this
+    intro out
+    intro h4
+    have : (cons false (cons b bs)).findMinLeft1? = some out.succ := by simp only [findMinLeft1?, Nat.succ_eq_add_one, h4]
+    simp only [this, Option.get_some, change1, h4]
+
+theorem Subset.ml1?_gV_fst {n : Nat} {s : Subset n} (h : s.grayVal.snd) (h2 : s.findMinLeft1?.isSome) : (s.change1 (s.findMinLeft1?.get h2) (by simp)).grayVal.fst+1 = s.grayVal.fst := by
   induction n with
   | zero =>
     match s with
@@ -138,7 +157,37 @@ theorem Subset.ml1?_gV_fst {n : Nat} {s : Subset n} {h : s.grayVal.snd} {h2 : s.
             _ = (cons false (cons b bs)).grayVal.snd := by rfl
             _ = true := h
         match h2' : (cons b bs).findMinLeft1?.isSome with
-        | true => skip
+        | true =>
+          -- have : ((cons b bs).change1 ((cons b bs).findMinLeft1?.get h2') (by simp)).grayVal.fst = (cons b bs).grayVal.fst - 1 :=
+          --   calc ((cons b bs).change1 ((cons b bs).findMinLeft1?.get h2') (by simp)).grayVal.fst
+          --     _ = ((cons b bs).change1 ((cons b bs).findMinLeft1?.get h2') (by simp)).grayVal.fst + 1 - 1 := by simp_arith
+          --     _ = (cons b bs).grayVal.fst - 1 := by rw [ih h' h2']
+          -- calc ((cons false (cons b bs)).change1 ((cons false (cons b bs)).findMinLeft1?.get h2) (by simp)).grayVal.fst + 1
+          --   _ = (cons false ((cons b bs).change1 ((cons b bs).findMinLeft1?.get h2') (by simp))).grayVal.fst + 1 := by rw [change1_cons_false_IS h2 h2']
+          --   _ = (cons false ((cons b bs).change1 ((cons b bs).findMinLeft1?.get h2') (by simp))).grayVal.fst + 1 := by rw [change1_cons_false_IS h2 h2']
+          rw [change1_cons_false_IS h2 h2']
+          simp only [grayVal]
+          simp only [Bool.false_xor]
+          -- have : ((cons b bs).change1 ((cons b bs).findMinLeft1?.get h2') (by simp)).grayVal.fst+1 = (cons b bs).grayVal.fst := ih h' h2'
+          have h3 : ((cons b bs).change1 ((cons b bs).findMinLeft1?.get h2') (by simp)).grayVal.fst = (cons b bs).grayVal.fst - 1 :=
+            calc ((cons b bs).change1 ((cons b bs).findMinLeft1?.get h2') (by simp)).grayVal.fst
+              _ = ((cons b bs).change1 ((cons b bs).findMinLeft1?.get h2') (by simp)).grayVal.fst + 1 - 1 := by simp_arith
+              _ = (cons b bs).grayVal.fst - 1 := by rw [ih h' h2']
+          simp only [h3]
+          have : bs.grayVal.snd = !b :=
+            calc bs.grayVal.snd
+              _ = xor false bs.grayVal.snd := by rw [Bool.false_xor bs.grayVal.snd]
+              _ = xor (xor b b) bs.grayVal.snd := by rw [Bool.xor_self]
+              _ = xor b (xor b bs.grayVal.snd) := by rw [Bool.xor_assoc]
+              _ = xor b (cons b bs).grayVal.snd := by rfl
+              _ = xor b true := by rw [h']
+              _ = !b := Bool.xor_true b
+          simp only [this, Bool.eq_not_self, ↓reduceIte, Nat.add_zero]
+          simp only [Bool.xor_not b b, bne_self_eq_false, Bool.not_false, ↓reduceIte, Nat.add_zero]
+          simp_arith
+          simp only [grayVal]
+          simp only [this, Bool.bne_not_self, ↓reduceIte, Nat.add_zero]
+          -- calc (2 * (2 * bs.grayVal.fst - 1) + if ((cons b bs).change1 ↑((cons b bs).findMinLeft1?.get h2') ⋯).grayVal.snd = true then 0 else 1) + 1
         | false =>
           have : (cons false (cons b bs)).findMinLeft1?.isSome = false := by
             simp [findMinLeft1?]
