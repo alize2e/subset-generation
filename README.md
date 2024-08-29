@@ -32,8 +32,6 @@ GrayCodeProof and GrayCodeProofLemmas
 GrayIt and GrayItValProof
 - GrayIt: iterative function `grayIt` for Gray code generation that is based on "Algorithm G" from p.286 of the Knuth book, with proof of termination
 - GrayItValProof has some functions and lemmas used in GrayIt
-- next steps:
-  - rename theorems and functions, general cleanup
 
 GrayRec, GrayRecComp, and GrayRecSlides
 - GrayRec and GrayRecSlides have:
