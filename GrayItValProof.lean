@@ -183,6 +183,63 @@ theorem Subset.change1_cons_false_IS {n : Nat} {b : Bool} {bs : Subset n}
     have : (cons false (cons b bs)).findMinLeft1? = some out.succ := by simp only [findMinLeft1?, Nat.succ_eq_add_one, h4]
     simp only [this, Option.get_some, change1, h4]
 
+theorem Subset.gV2_false_ne_nil_gV_pos {n : Nat} {s : Subset n} {h : s.grayVal.snd = false} : n ≠ 0 → s.grayVal.fst ≥ 1 := by
+  induction n with -- not really induction but oh well
+  | zero => nofun
+  | succ n' =>
+    match s with
+    | cons b bs =>
+      simp [grayVal]
+      have : b = bs.grayVal.snd :=
+        calc b
+          _ = xor b false := by rw [Bool.xor_false b]
+          _ = xor b (xor bs.grayVal.snd bs.grayVal.snd) := by rw [Bool.xor_self bs.grayVal.snd]
+          _ = xor (xor b bs.grayVal.snd) bs.grayVal.snd := by rw [Bool.xor_assoc]
+          _ = xor ((cons b bs).grayVal.snd) bs.grayVal.snd := by rfl
+          _ = xor false bs.grayVal.snd := by rw [h]
+          _ = bs.grayVal.snd := Bool.false_xor bs.grayVal.snd
+      simp [this]
+
+theorem Subset.bs_gV_help {n''' : Nat} {b : Bool} {bs : Subset n'''} (h2' : (cons b bs).findMinLeft1?.isSome = true)
+  (h5 : bs.grayVal.snd = !b) : bs.grayVal.fst ≥ 1 :=
+    match n''' with
+    | .zero => by
+      match bs with
+      | nil =>
+        have : nil.grayVal.fst = 0 := by rfl
+        simp only [this, ge_iff_le, Nat.le_zero_eq, Nat.add_one_ne_zero]
+        match b with
+        | true =>
+          have : (cons true nil).findMinLeft1?.isSome = false := by rfl
+          contradiction
+        | false =>
+          have : (cons false nil).grayVal.snd = false := by rfl
+          contradiction
+    | .succ niv => by
+      match b with
+      | false =>
+        match h2'' : bs.findMinLeft1?.isSome with
+        | true => simp only [ge_iff_le, h2'', fML1?_isSome_gV_pos]
+        | false =>
+          match h3 : bs.findMinLeft1? with
+          | none =>
+            have : (cons false bs).findMinLeft1?.isSome = false := by simp only [findMinLeft1?, Option.isSome, h3]
+            have : true = false :=
+              calc true
+                _ = (cons false bs).findMinLeft1?.isSome := by rw [h2']
+                _ = false := this
+            contradiction
+          | some out =>
+            have : bs.findMinLeft1?.isSome := by simp only [h3, Option.isSome]
+            have : true = false :=
+              calc true
+                _ = bs.findMinLeft1?.isSome := by rw [this]
+                _ = false := h2''
+            contradiction
+      | true =>
+        match bs with
+        | cons b' bs' => simp only [ge_iff_le, h5, Bool.not_true, ne_eq, Nat.add_one_ne_zero, not_false_eq_true, gV2_false_ne_nil_gV_pos]
+
 theorem Subset.ml1?_gV_fst {n : Nat} {s : Subset n} (h : s.grayVal.snd) (h2 : s.findMinLeft1?.isSome) : (s.change1 (s.findMinLeft1?.get h2) (by simp)).grayVal.fst+1 = s.grayVal.fst := by
   induction n with
   | zero =>
@@ -242,10 +299,11 @@ theorem Subset.ml1?_gV_fst {n : Nat} {s : Subset n} (h : s.grayVal.snd) (h2 : s.
                       _ = (cons b nil).findMinLeft1?.isSome := by rw [h2']
                       _ = false := h2'f
                   contradiction
-              | .succ n''' => skip
-                -- match bs with
-                -- | cons true bs' => skip
-                -- | cons false bs' => sorry
+              | .succ n''' =>
+                calc 1
+                  _ ≤ bs.grayVal.fst := by simp only [bs_gV_help h2' h5]
+                  _ = 1*bs.grayVal.fst := by simp_arith
+                  _ ≤ 2*bs.grayVal.fst := Nat.mul_le_mul_right bs.grayVal.fst (by simp only [Nat.reduceLeDiff])
             | some out' =>
               calc 1
               _ ≤ bs.grayVal.fst := fML1?_isSome_gV_pos (by simp [h4])
@@ -299,68 +357,10 @@ theorem Subset.cons_true_cons_gV_pos {n : Nat} (b : Bool) (bs : Subset n) : (con
       match b with
       | true =>
         calc 1
-          _ ≤ (cons true (cons false bs')).grayVal.fst := ih
+          _ ≤ (cons true (cons false bs')).grayVal.fst := ih false
           _ ≤ (cons true (cons true (cons false bs'))).grayVal.fst := cons_gV_ge_gV
       | false =>
         simp [grayVal]
         match bs'.grayVal.snd with
         | true => simp_arith
         | false => simp_arith
-
-theorem Subset.gV2_false_ne_nil_gV_pos {n : Nat} {s : Subset n} {h : s.grayVal.snd = false} : n ≠ 0 → s.grayVal.fst ≥ 1 := by
-  induction n with -- not really induction but oh well
-  | zero => nofun
-  | succ n' =>
-    match s with
-    | cons b bs =>
-      simp [grayVal]
-      have : b = bs.grayVal.snd :=
-        calc b
-          _ = xor b false := by rw [Bool.xor_false b]
-          _ = xor b (xor bs.grayVal.snd bs.grayVal.snd) := by rw [Bool.xor_self bs.grayVal.snd]
-          _ = xor (xor b bs.grayVal.snd) bs.grayVal.snd := by rw [Bool.xor_assoc]
-          _ = xor ((cons b bs).grayVal.snd) bs.grayVal.snd := by rfl
-          _ = xor false bs.grayVal.snd := by rw [h]
-          _ = bs.grayVal.snd := Bool.false_xor bs.grayVal.snd
-      simp [this]
-
-theorem Subset.bs_gV_help {n''' : Nat} {b : Bool} {bs : Subset n'''} (h' : (cons b bs).grayVal.snd = true)
-  (h2' : (cons b bs).findMinLeft1?.isSome = true) (h5 : bs.grayVal.snd = !b) (h4 : bs.findMinLeft1? = none) :
-  bs.grayVal.fst ≥ 1 := by
-    induction n''' generalizing b with
-    | zero =>
-      match bs with
-      | nil =>
-        have : nil.grayVal.fst = 0 := by rfl
-        simp only [this, ge_iff_le, Nat.le_zero_eq, Nat.add_one_ne_zero]
-        match b with
-        | true =>
-          have : (cons true nil).findMinLeft1?.isSome = false := by rfl
-          contradiction
-        | false =>
-          have : (cons false nil).grayVal.snd = false := by rfl
-          contradiction
-    | succ niv ih =>
-      match b with
-      | false =>
-        match h2'' : bs.findMinLeft1?.isSome with
-        | true => simp only [ge_iff_le, h2'', fML1?_isSome_gV_pos]
-        | false =>
-          match h3 : bs.findMinLeft1? with
-          | none =>
-            have : (cons false bs).findMinLeft1?.isSome = false := by simp only [findMinLeft1?, Option.isSome, h3]
-            have : true = false :=
-              calc true
-                _ = (cons false bs).findMinLeft1?.isSome := by rw [h2']
-                _ = false := this
-            contradiction
-          | some out =>
-            have : bs.findMinLeft1?.isSome := by simp only [h3, Option.isSome]
-            have : true = false :=
-              calc true
-                _ = bs.findMinLeft1?.isSome := by rw [this]
-                _ = false := h2''
-            contradiction
-      | true =>
-        match bs with
-        | cons b' bs' => simp only [ge_iff_le, h5, Bool.not_true, ne_eq, Nat.add_one_ne_zero, not_false_eq_true, gV2_false_ne_nil_gV_pos]
