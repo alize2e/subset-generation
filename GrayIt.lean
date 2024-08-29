@@ -1,7 +1,5 @@
 import «Subsets».GrayItValProof
 
-#check Subset.ml1?_gV_fst
-
 def Subset.helpGrayIt {m : Nat} (soFar : List (Subset (m+1))) (_ : soFar.length>0) : List (Subset m.succ) :=
     match soFar with
     | a :: xs =>
@@ -18,7 +16,7 @@ def Subset.helpGrayIt {m : Nat} (soFar : List (Subset (m+1))) (_ : soFar.length>
           | false => soFar
           | true =>
             let next := (cons a₀ as).change1 ((cons a₀ as).findMinLeft1?.get h2) (by simp)
-            have : (grayVal next).fst+1 = (grayVal (cons a₀ as)).fst := ml1?_gV_fst h h2
+            have : (grayVal next).fst+1 = (grayVal (cons a₀ as)).fst := dec_case_2 h h2
             have : (grayVal next).fst+1 ≤ (grayVal (cons a₀ as)).fst := by simp only [this, Nat.le_refl]
             helpGrayIt (next :: soFar) (by simp only [List.length_cons, gt_iff_lt, Nat.zero_lt_succ])
       termination_by (soFar[0].grayVal).fst
