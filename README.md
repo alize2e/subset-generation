@@ -28,7 +28,7 @@ EqTransport
 
 GrayCodeProof and GrayCodeProofLemmas
 - proof that the number of changes between adjacent elements of the output of `grayRecSlides` is exactly 1, which is generalized to `genGray` too
-- next steps: prove the same property for `grayIt` and `grayLoopless
+- next steps: prove the same property for `grayIt` and `grayLoopless`
 
 GrayIt, GrayItValProof, and GrayLSorry
 - GrayIt: iterative function `grayIt` for Gray code generation that is based on "Algorithm G" from p.286 of the Knuth book, with proof of termination
