@@ -115,26 +115,6 @@ theorem Subset.gV_ne_change1_gV {n : Nat} {s : Subset n} {m : Nat} {h : m<n} : (
         _ = b.xor !bs.grayVal.snd := by rw [ih]
         _ = !(b.xor bs.grayVal.snd) := Bool.xor_not b bs.grayVal.snd
 
-def Subset.minLeft1? {n : Nat} (s : Subset n) : Option (Subset n) :=
-  match s.findMinLeft1? with
-  | none => none
-  | some out => s.change1 out (Fin.is_lt out)
-
-def Subset.ml1?XorGv {n : Nat} (s : Subset n) : Bool :=
-  match s.minLeft1? with
-  | none => true
-  | some out => xor (grayVal out).snd (grayVal s).snd
-
-theorem Subset.ml1?_gV_ne_gV {n : Nat} (s : Subset n) : s.ml1?XorGv := by
-  simp [ml1?XorGv]
-  simp [minLeft1?]
-  match s.findMinLeft1? with
-  | none => rfl
-  | some out => simp only [gV_ne_change1_gV, Bool.not_bne_self]
-
-#eval (Subset.genRec 3)
-#eval (Subset.genRec 3).map Subset.minLeft1?
-
 theorem Subset.ml1?_cons_idk {n : Nat} {b : Bool} {bs : Subset n} (h : (cons true (cons b bs)).grayVal.snd) :
   ((cons true (cons b bs)).change1 1 (by simp only [Nat.lt_add_left_iff_pos, Nat.zero_lt_succ])).grayVal.fst+1 = (cons true (cons b bs)).grayVal.fst := by
     have h1 : bs.grayVal.snd = b :=
@@ -183,10 +163,10 @@ theorem Subset.change1_cons_false_IS {n : Nat} {b : Bool} {bs : Subset n}
     have : (cons false (cons b bs)).findMinLeft1? = some out.succ := by simp only [findMinLeft1?, Nat.succ_eq_add_one, h4]
     simp only [this, Option.get_some, change1, h4]
 
-theorem Subset.gV2_false_ne_nil_gV_pos {n : Nat} {s : Subset n} {h : s.grayVal.snd = false} : n ≠ 0 → s.grayVal.fst ≥ 1 := by
-  induction n with -- not really induction but oh well
-  | zero => nofun
-  | succ n' =>
+theorem Subset.gV2_false_ne_nil_gV_pos {n : Nat} {s : Subset n} {h : s.grayVal.snd = false} : n ≠ 0 → s.grayVal.fst ≥ 1 :=
+  match n with
+  | .zero => nofun
+  | .succ n' => by
     match s with
     | cons b bs =>
       simp [grayVal]
@@ -286,7 +266,6 @@ theorem Subset.ml1?_gV_fst {n : Nat} {s : Subset n} (h : s.grayVal.snd) (h2 : s.
           simp only [gV_ne_change1_gV, h', Bool.not_true, Bool.false_eq_true, ↓reduceIte]
           simp_arith
           have : 1 ≤ 2*bs.grayVal.fst := by
-            -- have : bs.findMinLeft1?.isSome := sorry
             match h4 : bs.findMinLeft1? with
             | none =>
               match n'' with
@@ -333,34 +312,54 @@ theorem Subset.ml1?_gV_fst {n : Nat} {s : Subset n} (h : s.grayVal.snd) (h2 : s.
 
 
 
-theorem Subset.cons_gV_ge_gV {n : Nat} {b : Bool} {bs : Subset n} : (cons b bs).grayVal.fst ≥ bs.grayVal.fst := by
-  simp [grayVal]
-  simp_arith
+-- def Subset.minLeft1? {n : Nat} (s : Subset n) : Option (Subset n) :=
+--   match s.findMinLeft1? with
+--   | none => none
+--   | some out => s.change1 out (Fin.is_lt out)
 
-theorem Subset.cons_true_cons_gV_pos {n : Nat} (b : Bool) (bs : Subset n) : (cons true (cons b bs)).grayVal.fst ≥ 1 := by
-  induction bs generalizing b with
-  | nil =>
-    match b with
-    | true => simp only [grayVal, Nat.mul_zero, Bool.bne_false, ↓reduceIte, Nat.add_zero, bne_self_eq_false, Bool.false_eq_true, Nat.zero_add, ge_iff_le, Nat.le_refl]
-    | false => simp only [grayVal, Nat.mul_zero, bne_self_eq_false, Bool.false_eq_true, ↓reduceIte, Nat.zero_add, Nat.mul_one, Bool.bne_false, Nat.add_zero, ge_iff_le, Nat.reduceLeDiff]
-  | cons b' bs' ih =>
-    match b' with
-    | true =>
-      simp [grayVal]
-      match bs'.grayVal.snd with
-      | true => simp_arith
-      | false =>
-        match b with
-        | true => simp_arith
-        | false => simp_arith
-    | false =>
-      match b with
-      | true =>
-        calc 1
-          _ ≤ (cons true (cons false bs')).grayVal.fst := ih false
-          _ ≤ (cons true (cons true (cons false bs'))).grayVal.fst := cons_gV_ge_gV
-      | false =>
-        simp [grayVal]
-        match bs'.grayVal.snd with
-        | true => simp_arith
-        | false => simp_arith
+-- def Subset.ml1?XorGv {n : Nat} (s : Subset n) : Bool :=
+--   match s.minLeft1? with
+--   | none => true
+--   | some out => xor (grayVal out).snd (grayVal s).snd
+
+-- theorem Subset.ml1?_gV_ne_gV {n : Nat} (s : Subset n) : s.ml1?XorGv := by
+--   simp [ml1?XorGv]
+--   simp [minLeft1?]
+--   match s.findMinLeft1? with
+--   | none => rfl
+--   | some out => simp only [gV_ne_change1_gV, Bool.not_bne_self]
+
+-- #eval (Subset.genRec 3)
+-- #eval (Subset.genRec 3).map Subset.minLeft1?
+
+-- theorem Subset.cons_gV_ge_gV {n : Nat} {b : Bool} {bs : Subset n} : (cons b bs).grayVal.fst ≥ bs.grayVal.fst := by
+--   simp [grayVal]
+--   simp_arith
+
+-- theorem Subset.cons_true_cons_gV_pos {n : Nat} (b : Bool) (bs : Subset n) : (cons true (cons b bs)).grayVal.fst ≥ 1 := by
+--   induction bs generalizing b with
+--   | nil =>
+--     match b with
+--     | true => simp only [grayVal, Nat.mul_zero, Bool.bne_false, ↓reduceIte, Nat.add_zero, bne_self_eq_false, Bool.false_eq_true, Nat.zero_add, ge_iff_le, Nat.le_refl]
+--     | false => simp only [grayVal, Nat.mul_zero, bne_self_eq_false, Bool.false_eq_true, ↓reduceIte, Nat.zero_add, Nat.mul_one, Bool.bne_false, Nat.add_zero, ge_iff_le, Nat.reduceLeDiff]
+--   | cons b' bs' ih =>
+--     match b' with
+--     | true =>
+--       simp [grayVal]
+--       match bs'.grayVal.snd with
+--       | true => simp_arith
+--       | false =>
+--         match b with
+--         | true => simp_arith
+--         | false => simp_arith
+--     | false =>
+--       match b with
+--       | true =>
+--         calc 1
+--           _ ≤ (cons true (cons false bs')).grayVal.fst := ih false
+--           _ ≤ (cons true (cons true (cons false bs'))).grayVal.fst := cons_gV_ge_gV
+--       | false =>
+--         simp [grayVal]
+--         match bs'.grayVal.snd with
+--         | true => simp_arith
+--         | false => simp_arith
