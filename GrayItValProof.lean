@@ -115,7 +115,7 @@ theorem Subset.gV_ne_change1_gV {n : Nat} {s : Subset n} {m : Nat} {h : m<n} : (
         _ = b.xor !bs.grayVal.snd := by rw [ih]
         _ = !(b.xor bs.grayVal.snd) := Bool.xor_not b bs.grayVal.snd
 
-theorem Subset.ml1?_cons_idk {n : Nat} {b : Bool} {bs : Subset n} (h : (cons true (cons b bs)).grayVal.snd) :
+theorem Subset.cons_true_ml1?ish_gV_IS {n : Nat} {b : Bool} {bs : Subset n} (h : (cons true (cons b bs)).grayVal.snd) :
   ((cons true (cons b bs)).change1 1 (by simp only [Nat.lt_add_left_iff_pos, Nat.zero_lt_succ])).grayVal.fst+1 = (cons true (cons b bs)).grayVal.fst := by
     have h1 : bs.grayVal.snd = b :=
       calc bs.grayVal.snd
@@ -180,7 +180,7 @@ theorem Subset.gV2_false_ne_nil_gV_pos {n : Nat} {s : Subset n} {h : s.grayVal.s
           _ = bs.grayVal.snd := Bool.false_xor bs.grayVal.snd
       simp [this]
 
-theorem Subset.bs_gV_help {n''' : Nat} {b : Bool} {bs : Subset n'''} (h2' : (cons b bs).findMinLeft1?.isSome = true)
+theorem Subset.bs_gV_pos_help {n''' : Nat} {b : Bool} {bs : Subset n'''} (h2' : (cons b bs).findMinLeft1?.isSome = true)
   (h5 : bs.grayVal.snd = !b) : bs.grayVal.fst ≥ 1 :=
     match n''' with
     | .zero => by
@@ -220,7 +220,7 @@ theorem Subset.bs_gV_help {n''' : Nat} {b : Bool} {bs : Subset n'''} (h2' : (con
         match bs with
         | cons b' bs' => simp only [ge_iff_le, h5, Bool.not_true, ne_eq, Nat.add_one_ne_zero, not_false_eq_true, gV2_false_ne_nil_gV_pos]
 
-theorem Subset.ml1?_gV_fst {n : Nat} {s : Subset n} (h : s.grayVal.snd) (h2 : s.findMinLeft1?.isSome) : (s.change1 (s.findMinLeft1?.get h2) (by simp)).grayVal.fst+1 = s.grayVal.fst := by
+theorem Subset.dec_case_2 {n : Nat} {s : Subset n} (h : s.grayVal.snd) (h2 : s.findMinLeft1?.isSome) : (s.change1 (s.findMinLeft1?.get h2) (by simp)).grayVal.fst+1 = s.grayVal.fst := by
   induction n with
   | zero =>
     match s with
@@ -233,7 +233,7 @@ theorem Subset.ml1?_gV_fst {n : Nat} {s : Subset n} (h : s.grayVal.snd) (h2 : s.
       | cons false nil => nofun
     | Nat.succ n'' =>
       match s with
-      | cons true (cons _ _) => apply ml1?_cons_idk h
+      | cons true (cons _ _) => apply cons_true_ml1?ish_gV_IS h
       | cons false (cons b bs) =>
         have h' : (cons b bs).grayVal.snd :=
           calc (cons b bs).grayVal.snd
@@ -280,7 +280,7 @@ theorem Subset.ml1?_gV_fst {n : Nat} {s : Subset n} (h : s.grayVal.snd) (h2 : s.
                   contradiction
               | .succ n''' =>
                 calc 1
-                  _ ≤ bs.grayVal.fst := by simp only [bs_gV_help h2' h5]
+                  _ ≤ bs.grayVal.fst := by simp only [bs_gV_pos_help h2' h5]
                   _ = 1*bs.grayVal.fst := by simp_arith
                   _ ≤ 2*bs.grayVal.fst := Nat.mul_le_mul_right bs.grayVal.fst (by simp only [Nat.reduceLeDiff])
             | some out' =>
