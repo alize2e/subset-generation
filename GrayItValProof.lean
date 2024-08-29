@@ -51,6 +51,53 @@ def Subset.findMinLeft1? {n : Nat} : Subset n → Option (Fin n)
     | none => none
     | some out => some out.succ
 
+theorem Subset.fML1?_isSome_gV_pos {n : Nat} {s : Subset n} : s.findMinLeft1?.isSome → 1 ≤ s.grayVal.fst := by
+  induction n with
+  | zero =>
+    match s with
+    | nil => nofun
+  | succ n' ih =>
+    match n' with
+    | .zero =>
+      match s with
+      | cons false nil => nofun
+      | cons true nil => nofun
+    | .succ n'' =>
+      match s with
+      | cons true (cons b bs) =>
+        intro h
+        match h1 : (cons b bs).grayVal.snd with
+        | true =>
+          calc (cons true (cons b bs)).grayVal.fst
+            _ = 2*(cons b bs).grayVal.fst + (if (xor true (cons b bs).grayVal.snd) then 0 else 1) := by rfl
+            _ = 2*(cons b bs).grayVal.fst + (if !(cons b bs).grayVal.snd then 0 else 1) := by rw [Bool.true_xor (cons b bs).grayVal.snd]
+            _ = 2*(cons b bs).grayVal.fst + (if !true then 0 else 1) := by rw [h1]
+            _ = 2*(cons b bs).grayVal.fst + 1 := by rfl
+            _ ≥ 1 := by simp only [ge_iff_le, Nat.le_add_left]
+        | false =>
+          calc 1
+            _ ≤ 2 := by simp
+            _ ≤ 4*bs.grayVal.fst + 2 := by simp_arith
+            _ = 2*(2*bs.grayVal.fst + 1) := by simp_arith
+            _ = 2*(2*bs.grayVal.fst + (if false then 0 else 1)) := by simp only [Bool.false_eq_true, ↓reduceIte]
+            _ = 2*(2*bs.grayVal.fst + (if (cons b bs).grayVal.snd then 0 else 1)) := by rw [h1]
+            _ = 2*(2*bs.grayVal.fst + (if b.xor bs.grayVal.snd then 0 else 1)) := by rfl
+            _ = 2*(cons b bs).grayVal.fst := by rfl
+            _ ≤ 2*(cons b bs).grayVal.fst + (if (xor true (cons b bs).grayVal.snd) then 0 else 1) := by simp only [Bool.true_bne, Bool.not_eq_true', ge_iff_le, Nat.le_add_right]
+            _ = (cons true (cons b bs)).grayVal.fst := by rfl
+      | cons false (cons b bs) =>
+        simp only [findMinLeft1?]
+        match h2 : (cons b bs).findMinLeft1? with
+        | none => nofun
+        | some out =>
+          intro h
+          calc 1
+            _ ≤ (cons b bs).grayVal.fst := ih (by simp only [Nat.succ_eq_add_one, h2, Option.isSome_some])
+            _ = 1*(cons b bs).grayVal.fst := by simp_arith
+            _ ≤ 2*(cons b bs).grayVal.fst := Nat.mul_le_mul_right (cons b bs).grayVal.fst (by simp : 1 ≤ 2)
+            _ ≤ 2*(cons b bs).grayVal.fst + (if false.xor (cons b bs).grayVal.snd then 0 else 1) := by simp
+            _ = (cons false (cons b bs)).grayVal.fst := by rfl
+
 theorem Subset.gV_ne_change1_gV {n : Nat} {s : Subset n} {m : Nat} {h : m<n} : (s.change1 m h).grayVal.snd = !s.grayVal.snd := by
   induction s generalizing m with
   | nil => nofun
@@ -158,17 +205,9 @@ theorem Subset.ml1?_gV_fst {n : Nat} {s : Subset n} (h : s.grayVal.snd) (h2 : s.
             _ = true := h
         match h2' : (cons b bs).findMinLeft1?.isSome with
         | true =>
-          -- have : ((cons b bs).change1 ((cons b bs).findMinLeft1?.get h2') (by simp)).grayVal.fst = (cons b bs).grayVal.fst - 1 :=
-          --   calc ((cons b bs).change1 ((cons b bs).findMinLeft1?.get h2') (by simp)).grayVal.fst
-          --     _ = ((cons b bs).change1 ((cons b bs).findMinLeft1?.get h2') (by simp)).grayVal.fst + 1 - 1 := by simp_arith
-          --     _ = (cons b bs).grayVal.fst - 1 := by rw [ih h' h2']
-          -- calc ((cons false (cons b bs)).change1 ((cons false (cons b bs)).findMinLeft1?.get h2) (by simp)).grayVal.fst + 1
-          --   _ = (cons false ((cons b bs).change1 ((cons b bs).findMinLeft1?.get h2') (by simp))).grayVal.fst + 1 := by rw [change1_cons_false_IS h2 h2']
-          --   _ = (cons false ((cons b bs).change1 ((cons b bs).findMinLeft1?.get h2') (by simp))).grayVal.fst + 1 := by rw [change1_cons_false_IS h2 h2']
           rw [change1_cons_false_IS h2 h2']
           simp only [grayVal]
           simp only [Bool.false_xor]
-          -- have : ((cons b bs).change1 ((cons b bs).findMinLeft1?.get h2') (by simp)).grayVal.fst+1 = (cons b bs).grayVal.fst := ih h' h2'
           have h3 : ((cons b bs).change1 ((cons b bs).findMinLeft1?.get h2') (by simp)).grayVal.fst = (cons b bs).grayVal.fst - 1 :=
             calc ((cons b bs).change1 ((cons b bs).findMinLeft1?.get h2') (by simp)).grayVal.fst
               _ = ((cons b bs).change1 ((cons b bs).findMinLeft1?.get h2') (by simp)).grayVal.fst + 1 - 1 := by simp_arith
@@ -187,7 +226,21 @@ theorem Subset.ml1?_gV_fst {n : Nat} {s : Subset n} (h : s.grayVal.snd) (h2 : s.
           simp_arith
           simp only [grayVal]
           simp only [this, Bool.bne_not_self, ↓reduceIte, Nat.add_zero]
-          -- calc (2 * (2 * bs.grayVal.fst - 1) + if ((cons b bs).change1 ↑((cons b bs).findMinLeft1?.get h2') ⋯).grayVal.snd = true then 0 else 1) + 1
+          simp only [gV_ne_change1_gV, h', Bool.not_true, Bool.false_eq_true, ↓reduceIte]
+          simp_arith
+          have : 1 ≤ 2*bs.grayVal.fst := by
+            -- have : bs.findMinLeft1?.isSome := sorry
+            match h4 : bs.findMinLeft1? with
+            | none =>
+              match bs with
+            | some out' =>
+              calc 1
+              _ ≤ bs.grayVal.fst := fML1?_isSome_gV_pos (by simp [h4])
+              _ ≤ 2*bs.grayVal.fst := by simp_arith
+          calc 2 * (2 * bs.grayVal.fst - 1) + 2
+            _ = 2 * (2 * bs.grayVal.fst - 1 + 1) := Nat.mul_add 2 (2*bs.grayVal.fst-1) 1
+            _ = 2 * (2 * bs.grayVal.fst) := by rw [Nat.sub_add_cancel this]
+            _ = 4 * bs.grayVal.fst := by simp_arith
         | false =>
           have : (cons false (cons b bs)).findMinLeft1?.isSome = false := by
             simp [findMinLeft1?]
@@ -206,6 +259,3 @@ theorem Subset.ml1?_gV_fst {n : Nat} {s : Subset n} (h : s.grayVal.snd) (h2 : s.
               _ = (cons false (cons b bs)).findMinLeft1?.isSome := by rw [h2]
               _ = false := by rw [this]
           contradiction
-  -- induction (s.findMinLeft1?.get h2).toNat with
-  -- | zero => nofun
-  -- | succ n' ih => skip
