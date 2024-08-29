@@ -28,10 +28,16 @@ EqTransport
 
 GrayCodeProof and GrayCodeProofLemmas
 - proof that the number of changes between adjacent elements of the output of `grayRecSlides` is exactly 1, which is generalized to `genGray` too
+- next steps: prove the same property for `grayIt` and `grayLoopless
 
-GrayIt and GrayItValProof
+GrayIt, GrayItValProof, and GrayLSorry
 - GrayIt: iterative function `grayIt` for Gray code generation that is based on "Algorithm G" from p.286 of the Knuth book, with proof of termination
+- GrayLSorry: function `grayLoopless` that generates the Gray code following "Algorithm L" outlined on p.290 of the Knuth book, using `sorry` for termination
 - GrayItValProof has some functions and lemmas used in GrayIt
+- next steps
+  - prove termination of `grayLoopless`
+  - prove that the output of `grayIt` and `grayLoopless` is the same as that of `genGray` and/or `grayRecSlides`
+  - proofs of other properties of `grayIt` and `grayLoopless`
 
 GrayRec, GrayRecComp, and GrayRecSlides
 - GrayRec and GrayRecSlides have:
@@ -43,9 +49,6 @@ GrayRec, GrayRecComp, and GrayRecSlides
   - a proof that `grayRecSlides` is equivalent to the generation method with xor 11000000... described on p.284 of the Knuth book
   - a proof that there are no duplicates in the output of `grayRecSlides`
 - GrayRecComp: proof that `genGray n = grayRecSlides n`
-
-GrayLSorry
-- function `grayLoopless` that generates the Gray code following "Algorithm L" outlined on p.290 of the Knuth book, using `sorry` for termination
 
 IsoFun and IsoVecB
 - functions between `Subset n` and either `Fin n → Bool` or `VecB n` (`VecB := Vect Bool`) whose compositions are the identity function, and therefore show that `Subset n` is isomorphic to `Fin n → Bool` and `VecB n`
@@ -73,7 +76,5 @@ UniqMem
 - definition of `UniqMem`
 - attempts at proofs involving `UniqMem` (namely in the goal of proving that each `Subset n` occurs in `genRec n` etc. exactly once)
 - unnecessary now since I can use List.Nodup
-
-General potential next step(s): "Algorithm L" from Knuth book
 
 (Note: "the Knuth book" refers to _The Art of Computer Programming, Volume 4A, Combinatorial Algorithms, Part 1_ by Donald E. Knuth.)
