@@ -29,12 +29,10 @@ EqTransport
 GrayCodeProof and GrayCodeProofLemmas
 - proof that the number of changes between adjacent elements of the output of `grayRecSlides` is exactly 1, which is generalized to `genGray` too
 
-GrayItProof, GrayItSorry, and GrayItValProof
-- GrayItSorry and GrayItProof have an iterative algorithm, `grayIt`, for Gray code generation that is based on "Algorithm G" from p.286 of the Knuth book. They also include an outline for a proof of termination that depends on `sorry`s – the outline in GrayItSorry is simpler, and that in GrayItProof has more proofs / is further along
-- GrayItValProof has some functions and lemmas used in GrayItProof
+GrayIt and GrayItValProof
+- GrayIt: iterative function `grayIt` for Gray code generation that is based on "Algorithm G" from p.286 of the Knuth book, with proof of termination
+- GrayItValProof has some functions and lemmas used in GrayIt
 - next steps:
-  - see if it's the case that `1 ≤ 2*bs.grayVal.fst` in `ml1?_gV_fst`, and if so then finish proof – otherwise find different path
-  - finish proving termination
   - rename theorems and functions, general cleanup
 
 GrayRec, GrayRecComp, and GrayRecSlides
