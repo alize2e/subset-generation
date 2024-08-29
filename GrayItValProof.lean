@@ -279,7 +279,7 @@ theorem Subset.cons_gV_ge_gV {n : Nat} {b : Bool} {bs : Subset n} : (cons b bs).
   simp [grayVal]
   simp_arith
 
-theorem Subset.cons_true_cons_gV_pos {n : Nat} {b : Bool} {bs : Subset n} : (cons true (cons b bs)).grayVal.fst ≥ 1 := by
+theorem Subset.cons_true_cons_gV_pos {n : Nat} (b : Bool) (bs : Subset n) : (cons true (cons b bs)).grayVal.fst ≥ 1 := by
   induction bs generalizing b with
   | nil =>
     match b with
@@ -332,7 +332,7 @@ theorem Subset.bs_gV_help {n''' : Nat} {b : Bool} {bs : Subset n'''} (h' : (cons
       match bs with
       | nil =>
         have : nil.grayVal.fst = 0 := by rfl
-        simp [this]
+        simp only [this, ge_iff_le, Nat.le_zero_eq, Nat.add_one_ne_zero]
         match b with
         | true =>
           have : (cons true nil).findMinLeft1?.isSome = false := by rfl
@@ -344,21 +344,23 @@ theorem Subset.bs_gV_help {n''' : Nat} {b : Bool} {bs : Subset n'''} (h' : (cons
       match b with
       | false =>
         match h2'' : bs.findMinLeft1?.isSome with
-        | true => simp [fML1?_isSome_gV_pos, h2'']
+        | true => simp only [ge_iff_le, h2'', fML1?_isSome_gV_pos]
         | false =>
           match h3 : bs.findMinLeft1? with
           | none =>
-            have : (cons false bs).findMinLeft1?.isSome = false := by simp [findMinLeft1?, Option.isSome, h3]
+            have : (cons false bs).findMinLeft1?.isSome = false := by simp only [findMinLeft1?, Option.isSome, h3]
             have : true = false :=
               calc true
                 _ = (cons false bs).findMinLeft1?.isSome := by rw [h2']
                 _ = false := this
             contradiction
           | some out =>
-            have : bs.findMinLeft1?.isSome := by simp [findMinLeft1?, h3, Option.isSome]
+            have : bs.findMinLeft1?.isSome := by simp only [h3, Option.isSome]
             have : true = false :=
               calc true
                 _ = bs.findMinLeft1?.isSome := by rw [this]
                 _ = false := h2''
             contradiction
       | true =>
+        match bs with
+        | cons b' bs' => simp only [ge_iff_le, h5, Bool.not_true, ne_eq, Nat.add_one_ne_zero, not_false_eq_true, gV2_false_ne_nil_gV_pos]
