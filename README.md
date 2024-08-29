@@ -30,28 +30,32 @@ GrayCodeProof and GrayCodeProofLemmas
 - proof that the number of changes between adjacent elements of the output of `grayRecSlides` is exactly 1, which is generalized to `genGray` too
 
 GrayItProof, GrayItSorry, and GrayItValProof
-- GrayItSorry and GrayItProof have an iterative algorithm, `grayIt`, for Gray code generation that is based on "Algorithm G" from p. 286 of the Knuth book. They also include an outline for a proof of termination that depends on `sorry`s – the outline in GrayItSorry is simpler, and that in GrayItProof has more proofs / is further along
+- GrayItSorry and GrayItProof have an iterative algorithm, `grayIt`, for Gray code generation that is based on "Algorithm G" from p.286 of the Knuth book. They also include an outline for a proof of termination that depends on `sorry`s – the outline in GrayItSorry is simpler, and that in GrayItProof has more proofs / is further along
 - GrayItValProof has some functions and lemmas used in GrayItProof
 - next steps:
-  - figure out how to prove stuff about `minLeft1?` to use for a proof of `dec_case_2`
+  - see if it's the case that `1 ≤ 2*bs.grayVal.fst` in `ml1?_gV_fst`, and if so then finish proof – otherwise find different path
   - finish proving termination
+  - rename theorems and functions, general cleanup
 
 GrayRec, GrayRecComp, and GrayRecSlides
 - GrayRec and GrayRecSlides have:
-  - a function (`genGray` and `grayRecSlides`, respectively) which generates the Gray code recursively. `genGray` is based on the "algorithm" suggested by (5) on p. 283 of the Knuth book, while `grayRecSlides` uses the algorithm from the CSE102 slides
+  - a function (`genGray` and `grayRecSlides`, respectively) which generates the Gray code recursively. `genGray` is based on the "algorithm" suggested by (5) on p.283 of the Knuth book, while `grayRecSlides` uses the algorithm from the CSE102 slides
   - a proof that any `Subset n` is in the output of `genGray n`/`grayRecSlides n`
   - a proof that the output of `genGray n`/`grayRecSlides n` is of length 2^n
   - a proof of some sort of symmetry of the helper function
 - GrayRecSlides also has
-  - a proof that `grayRecSlides` is equivalent to the generation method with xor 11000000... described on p. 284 of the Knuth book
+  - a proof that `grayRecSlides` is equivalent to the generation method with xor 11000000... described on p.284 of the Knuth book
   - a proof that there are no duplicates in the output of `grayRecSlides`
 - GrayRecComp: proof that `genGray n = grayRecSlides n`
+
+GrayLSorry
+- function `grayLoopless` that generates the Gray code following "Algorithm L" outlined on p.290 of the Knuth book, as well as helper functions
 
 IsoFun and IsoVecB
 - functions between `Subset n` and either `Fin n → Bool` or `VecB n` (`VecB := Vect Bool`) whose compositions are the identity function, and therefore show that `Subset n` is isomorphic to `Fin n → Bool` and `VecB n`
 
 PlainItSorry
-- iterative function `genIt` that generates subsets in lexicographic order, and is similar to "Algorithm M" on p. 282 of the Knuth book
+- iterative function `genIt` that generates subsets in lexicographic order, and is similar to "Algorithm M" on p.282 of the Knuth book
 - includes a potential outline for a proof of termination of `genIt` that works in the first case but depends on `sorry`s in the second, and is unlikely to be doable because of the `cast` when adding to `soFar`
 - next steps: as far as I can tell, any method that does not rely on a `cast` would be much slower, so maybe I should revive the somewhat iterative in idea `subsetsItOG` or something along those lines, or pass a `curr : Subset n` as a parameter and edit it despite that being exceedingly slow
 
