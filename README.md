@@ -53,6 +53,9 @@ GrayRec, GrayRecComp, and GrayRecSlides
 IsoFun and IsoVecB
 - functions between `Subset n` and either `Fin n → Bool` or `VecB n` (`VecB := Vect Bool`) whose compositions are the identity function, and therefore show that `Subset n` is isomorphic to `Fin n → Bool` and `VecB n`
 
+PlainItIsh
+!!! complete !!!
+
 PlainItSorry
 - iterative function `genIt` that generates subsets in lexicographic order, and is similar to "Algorithm M" on p.282 of the Knuth book
 - includes a potential outline for a proof of termination of `genIt` that works in the first case but depends on `sorry`s in the second, and is unlikely to be doable because of the `cast` when adding to `soFar`
