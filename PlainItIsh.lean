@@ -35,7 +35,7 @@ theorem Subset.incr_bV {n : Nat} (s : Subset n) {h : s.incr.isSome} : (binValOne
           _ = 2 * (binValOne bs 1) := by rw [ih]
           _ = binValOne (cons true bs) 1 := by simp only [Fin.isValue, binValOne, ↓reduceIte, Fin.reduceSub, Fin.val_zero, Nat.zero_add]
 
-def Subset.helpGenIt {n : Nat} (soFar : List (Subset n)) (_ : soFar.length>0) : List (Subset n) :=
+def Subset.helpPlainItIsh {n : Nat} (soFar : List (Subset n)) (_ : soFar.length>0) : List (Subset n) :=
   match h : soFar[0].incr with
   | none => soFar
   | some next =>
@@ -43,9 +43,9 @@ def Subset.helpGenIt {n : Nat} (soFar : List (Subset n)) (_ : soFar.length>0) : 
       calc (binValOne next 1) + 1
         _ = (binValOne (soFar[0].incr.get (by simp only [h, Option.isSome_some])) 1) + 1 := by simp only [Fin.isValue, h, Option.get_some]
         _ = binValOne soFar[0] 1 := incr_bV soFar[0]
-    helpGenIt (next :: soFar) (by simp only [List.length_cons, gt_iff_lt, Nat.zero_lt_succ])
+    helpPlainItIsh (next :: soFar) (by simp only [List.length_cons, gt_iff_lt, Nat.zero_lt_succ])
   termination_by (binValOne soFar[0] 1)
 
-def Subset.genIt (n : Nat) : List (Subset n) := helpGenIt [initFalse n] (by simp only [List.length_singleton, gt_iff_lt, Nat.lt_add_one])
+def Subset.plainItIsh (n : Nat) : List (Subset n) := helpPlainItIsh [initFalse n] (by simp only [List.length_singleton, gt_iff_lt, Nat.lt_add_one])
 
-#eval (Subset.genIt 3)
+#eval (Subset.plainItIsh 3)
