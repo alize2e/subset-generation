@@ -48,7 +48,7 @@ theorem Subset.cons_same_num_changes {n : Nat} {as bs : Subset n} {x : Bool} : n
   cases x
   repeat rfl
 
-theorem Subset.cons_diff_num_changes {n : Nat} {as bs : Subset n} {x : Bool} : num_changes (cons x as) (cons (!x) bs) = 1+num_changes as bs := by
+theorem Subset.cons_diff_num_changes {n : Nat} {as bs : Subset n} {x : Bool} : num_changes (cons (!x) as) (cons x bs) = 1+num_changes as bs := by
   cases x
   repeat rfl
 
