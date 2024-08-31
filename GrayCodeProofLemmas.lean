@@ -44,7 +44,7 @@ theorem Subset.symm_num_changes {n : Nat} {as bs : Subset n} : num_changes as bs
         _ = 1 + num_changes ys xs := by rw [ih]
         _ = num_changes (cons true ys) (cons false xs) := by rfl
 
-theorem Subset.cons_same_num_changes {n : Nat} (as bs : Subset n) {x : Bool} : num_changes (cons x as) (cons x bs) = num_changes as bs := by
+theorem Subset.cons_same_num_changes {n : Nat} {as bs : Subset n} {x : Bool} : num_changes (cons x as) (cons x bs) = num_changes as bs := by
   cases x
   repeat rfl
 
