@@ -1,6 +1,6 @@
 -- look at page 14!
 
-import «Subsets».SubsetDef
+import «Subsets».GrayCodeProofLemmas
 
 def Subset.grayVal {m : Nat} : Subset m → Nat × Bool
   | nil => (0, false)
