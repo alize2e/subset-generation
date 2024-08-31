@@ -56,6 +56,11 @@ theorem Subset.eq_num_changes_eq_zero {n : Nat} {as : Subset n} : num_changes as
     rw [this]
     rw [ih]
 
+def Subset.isGray {n : Nat} : List (Subset n) → Bool
+  | [] => true
+  | _::[] => true
+  | x :: y :: zs => (num_changes x y = 1) ∧ isGray (y::zs)
+
 
 
 -- copied from GrayRec
