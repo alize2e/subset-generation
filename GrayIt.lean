@@ -7,10 +7,9 @@ def Subset.helpGrayIt {m : Nat} (soFar : List (Subset (m+1))) (_ : soFar.length>
       | Subset.cons a₀ as =>
         match h : (cons a₀ as).grayVal.snd with -- (cons a₀ as).grayVal.snd = !a∞ from Knuth book
         | false =>
-          let a' := cons (!a₀) as
           have : (grayVal (cons (!a₀) as)).fst+1 = (grayVal (cons a₀ as)).fst := dec_case_1 a₀ as h
           have : (grayVal (cons (!a₀) as)).fst+1 ≤ (grayVal (cons a₀ as)).fst := by simp only [this, Nat.le_refl]
-          helpGrayIt (a' :: soFar) (by simp only [List.length_cons, gt_iff_lt, Nat.zero_lt_succ])
+          helpGrayIt ((cons (!a₀) as) :: (cons a₀ as) :: xs) (by simp only [List.length_cons, gt_iff_lt, Nat.zero_lt_succ])
         | true =>
           match h2 : (cons a₀ as).findMinLeft1?.isSome with
           | false => soFar
@@ -18,7 +17,7 @@ def Subset.helpGrayIt {m : Nat} (soFar : List (Subset (m+1))) (_ : soFar.length>
             let next := (cons a₀ as).change1 ((cons a₀ as).findMinLeft1?.get h2) (by simp)
             have : (grayVal next).fst+1 = (grayVal (cons a₀ as)).fst := dec_case_2 h h2
             have : (grayVal next).fst+1 ≤ (grayVal (cons a₀ as)).fst := by simp only [this, Nat.le_refl]
-            helpGrayIt (next :: soFar) (by simp only [List.length_cons, gt_iff_lt, Nat.zero_lt_succ])
+            helpGrayIt (next :: (cons a₀ as) :: xs) (by simp only [List.length_cons, gt_iff_lt, Nat.zero_lt_succ])
       termination_by (soFar[0].grayVal).fst
 
 def Subset.grayIt (n : Nat) : List (Subset n) :=
