@@ -65,11 +65,6 @@ def Subset.isGray {n : Nat} : List (Subset n) → Bool
   | _::[] => true
   | x :: y :: zs => (num_changes x y = 1) ∧ isGray (y::zs)
 
-structure Subset.grayList where
-  n : Nat
-  l : List (Subset n)
-  proof : (isGray l) = true
-
 
 
 -- copied from GrayRec
