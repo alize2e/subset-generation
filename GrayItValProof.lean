@@ -1,5 +1,3 @@
--- look at page 14!
-
 import «Subsets».GrayCodeProofLemmas
 
 def Subset.grayVal {m : Nat} : Subset m → Nat × Bool
