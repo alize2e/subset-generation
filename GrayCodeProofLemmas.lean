@@ -1,6 +1,6 @@
 import Subsets.GrayRecComp
 
--- copied from documentation
+-- copied from github documentation because not in v4.11.0-rc1 (actual name is List.getElem_reverse)
 theorem List.copied_getElem_reverse {l : List α} {i} (h : i < l.reverse.length) :
     l.reverse[i] = l[l.length - 1 - i]'(Nat.sub_one_sub_lt (by simpa using h)) := by
   apply Option.some.inj
