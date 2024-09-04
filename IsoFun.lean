@@ -23,9 +23,6 @@ theorem fts_stf_id {n : Nat} {s : Subset n} : funToSubset s.toFun = s := by
       _ = Subset.cons b s' := by rw [ih]
 
 theorem stf_fts_id_first {n : Nat} {f : Fin (n+1) → Bool} : (funToSubset f).toFun 0 = f 0 := by rfl
-  -- calc (funToSubset f).toFun 0
-  --   _ = (Subset.cons (f 0) (funToSubset (λ (i : Fin n) => f (Fin.succ i)))).toFun 0 := by rfl
-  --   _ = f 0 := by rfl
 
 theorem stf_fts_id_nil {f : Fin 0 → Bool} : (funToSubset f).toFun = f := by
   funext i
