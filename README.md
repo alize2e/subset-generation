@@ -60,7 +60,6 @@ PlainItIsh
 PlainItSorry
 - iterative function `genIt` that generates subsets in lexicographic order, and is similar to "Algorithm M" on p.282 of the Knuth book
 - includes a potential outline for a proof of termination of `genIt` that works in the first case but depends on `sorry`s in the second, and is unlikely to be doable because of the `cast` when adding to `soFar`
-- next steps: as far as I can tell, any method that does not rely on a `cast` would be much slower, so maybe I should revive the somewhat iterative in idea `subsetsItOG` or something along those lines, or pass a `curr : Subset n` as a parameter and edit it despite that being exceedingly slow
 
 PlainRecProofs
 - proof that any `Subset n` is in the output of `genRec n`
