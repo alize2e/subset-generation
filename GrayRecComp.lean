@@ -19,10 +19,6 @@ def Subset.genGray (n : Nat) : List (Subset n) :=
 
 #eval (Subset.genGray 3) == (Subset.grayRecSlides 3)
 
--- `TODO`
--- add xor 1100000... and how equivalent to reversing and complementing first? p 284
--- prove that gray only changes one bit at a time? (or do that with it?) how do i even formalize the theorem? p 283
-
 theorem Subset.helpGG_symmetry {n : Nat} {l : List (Subset n)} {soFar : List (Subset (n+1))} :
   helpGG l soFar = (l.map (cons false)) ++ List.reverseAux (l.map (cons true)) soFar := by
     induction l generalizing soFar with
