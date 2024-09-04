@@ -1,3 +1,5 @@
+-- very much a draft, now unnecessary
+
 import «Subsets».SubsetDef
 
 inductive List.UniqMem (x : α) : List α → Prop
