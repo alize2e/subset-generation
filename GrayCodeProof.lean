@@ -99,7 +99,7 @@ theorem Subset.c3 (n' i : Nat)
       _ = num_changes (grayRecSlides n')[(grayRecSlides n').length-1-(i.succ-(grayRecSlides n').length)] (grayRecSlides n')[((grayRecSlides n').length-1-(i.succ-(grayRecSlides n').length)).succ] := by rw [symm_num_changes]
       _ = 1 := by rw [ih]
 
--- edit so that i show it's also a gray cycle by changing h to ≤ not <, but a pain for indices
+-- edit so that i show it's also a gray cycle by changing h to ≤ not <?
 theorem Subset.grayRecSlides_one_change_next {n : Nat} {i : Nat} {h : i.succ<(grayRecSlides n).length} :
   num_changes (grayRecSlides n)[i] (grayRecSlides n)[i+1] = 1 := by
     induction n generalizing i with
