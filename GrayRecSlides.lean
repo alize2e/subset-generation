@@ -114,7 +114,6 @@ theorem Subset.append_map_cons_diff_rev_ne {n : Nat} {as bs : List (Subset n)} :
       | cons true b' => simp
     | cons true _ => contradiction
 
--- pairwise_reverse, pairwise_map
 theorem Subset.cons_diff_rev_nodup {n : Nat} {l : List (Subset n)} (h : l.Nodup) :
   ((l.map (cons false)) ++ (l.map (cons true)).reverse).Nodup := by
     simp only [List.Nodup] at *
