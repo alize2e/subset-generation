@@ -26,9 +26,10 @@ EqTransport
 - part of an attempt to prove termination of `genIt`, but this attempt will likely fail because of casting, so unlikely to be useful
 - defines an equivalence relation between `Subset n`s and `Subset m`s transported along `n=m`, and some lemmas about that
 
-GrayCodeProof and GrayCodeProofLemmas
-- proof that the number of changes between adjacent elements of the output of `grayRecSlides` is exactly 1, which is generalized to `genGray` too
-- next steps: prove the same property for `grayIt` and `grayLoopless`
+GrayCodeProof, GrayCodeProofIt, and GrayCodeProofLemmas
+- GrayCodeProof: proof that the number of changes between adjacent elements of the output of `grayRecSlides` is exactly 1, which is generalized to `genGray` too
+- GrayCodeProofIt: function `grayIt` as below except that it returns a list subtype `{l : List (Subset n) // isGray l}` 
+- next steps: prove the same property for `grayLoopless`
 
 GrayIt, GrayItValProof, and GrayLSorry
 - GrayIt: iterative function `grayIt` for Gray code generation that is based on "Algorithm G" from p.286 of the Knuth book, with proof of termination
