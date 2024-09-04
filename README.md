@@ -80,4 +80,7 @@ UniqMem
 - attempts at proofs involving `UniqMem` (namely in the goal of proving that each `Subset n` occurs in `genRec n` etc. exactly once)
 - unnecessary now since I can use List.Nodup
 
+Fold
+- quick side project to better understand folds: used a fold to implement addition and multiplication, and to prove that my definitions are equal to the canonical `HAdd.hAdd` and `HMul.hMul`
+
 (Note: "the Knuth book" refers to _The Art of Computer Programming, Volume 4A, Combinatorial Algorithms, Part 1_ by Donald E. Knuth.)
