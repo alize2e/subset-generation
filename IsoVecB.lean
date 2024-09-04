@@ -25,15 +25,6 @@ instance : ToString (VecB n) where toString := vecBToString
 
 @[reducible] def Vect.length {n : Nat} (_ : Vect α n) : Nat := n
 
--- def VecB.length {n : Nat} : VecB n → Nat
---   | Vect.nil => 0
---   | Vect.cons _ bs => 1 + (VecB.length bs)
-
--- `TODO` why doesn't this work?
--- inductive VecB2 :  Nat → Type where
---   | nil => VecB2 0
---   | cons => VecB2 n → VecB2 (n+1)
-
 -- conversion functions
 
 def Subset.toVecB {n : Nat} (s : Subset n) : VecB n :=
