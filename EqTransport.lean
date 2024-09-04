@@ -56,8 +56,3 @@ theorem Subset.eqT_self {n : Nat} (s : Subset n) : eqTransport s s = true := by
     match b with
       | true => simp [eqTransport, ih]
       | false => simp [eqTransport, ih]
-
--- theorem Subset.eqT_cast {n m : Nat} {eq : n = m} {s : Subset m} : eqTransport s (cast eq s) = true := by
---   induction n generalizing m with
---   | zero => rfl
---   | succ n' ih =>
