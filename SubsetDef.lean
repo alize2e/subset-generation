@@ -1,7 +1,11 @@
 inductive Subset : Nat → Type
   | nil  : Subset 0
   | cons : Bool → Subset n → Subset (n+1)
-deriving BEq
+
+def Subset.beq {n m : Nat} : Subset n → Subset m → Bool
+  | nil, nil    => true
+  | cons a as, cons b bs => a == b && Subset.beq as bs
+  | _,     _     => false
 
 def Subset.append {n m : Nat} : Subset n → Subset m → Subset (m+n)
   | nil, bs => bs
